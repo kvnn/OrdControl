@@ -1,0 +1,9 @@
+.DS_Store
+*.pyc
+*.code-workspace
+.env*
+lambdas/python
+*.zip
+env
+node_modules
+.terraform
