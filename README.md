@@ -23,7 +23,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 ## Details
 - this is currently set up to run on AWS `us-west-2`
-- it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to February 22 2013
+- it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to February 22 2023
 - you can change regions, availability zones and instance types in `variables.tf`. Note that the data drive mount may fail for instances that use `nvme` type drives, and it may fail for other regions. If you have a use-case you need help with, feel free to create an Issue.
 - the AMI used is a standard AWS AMI
 - see `init.tpl` for the scripting done to your server (e.g. to make sure there are no backdoors here)
