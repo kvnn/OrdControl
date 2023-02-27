@@ -4,24 +4,33 @@ echo "ord-server init.tpl starting"
 # to view logs in instance: `cat /var/log/cloud-init-output.log`
 # to view this script in instance: `sudo cat /var/lib/cloud/instances/{instance_id}/user-data.txt`
 
+# install OrdServer controller
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install python3-pip
+chown -R ubuntu.ubuntu /home/ubuntu/OrdServer
+cd /home/ubuntu/OrdServer
+sudo -H -u ubuntu pip3 install -r requirements.txt
+touch authkey.txt
+echo $RANDOM | md5sum | head -c 20; echo; > authkey.txt
+
 # set up a mount for our Bitcoin & Ord data dir
-sudo mkdir /mnt/bitcoin-ord-data
-sudo chown ubuntu.ubuntu /mnt/bitcoin-ord-data
-echo "/dev/xvdh /mnt/bitcoin-ord-data xfs defaults 0 2" | sudo tee -a /etc/fstab
-sudo mount /dev/xvdh /mnt/bitcoin-ord-data/
+mkdir /mnt/bitcoin-ord-data
+chown ubuntu.ubuntu /mnt/bitcoin-ord-data
+echo "/dev/xvdh /mnt/bitcoin-ord-data xfs defaults 0 2" | tee -a /etc/fstab
+mount /dev/xvdh /mnt/bitcoin-ord-data/
 
 # set up bitcoin
 cd ~
 wget https://bitcoincore.org/bin/bitcoin-core-24.0.1/bitcoin-24.0.1-x86_64-linux-gnu.tar.gz
 tar xvzf bitcoin-24.0.1-x86_64-linux-gnu.tar.gz
-sudo mv bitcoin-24.0.1 /usr/local/bin/bitcoin
-sudo mkdir /etc/bitcoin
-sudo chmod 755 /etc/bitcoin
-sudo cp /usr/local/bin/bitcoin/bitcoin.conf /etc/bitcoin/bitcoin.conf
-sudo chown -R ubuntu.ubuntu /etc/bitcoin
+mv bitcoin-24.0.1 /usr/local/bin/bitcoin
+mkdir /etc/bitcoin
+chmod 755 /etc/bitcoin
+cp /usr/local/bin/bitcoin/bitcoin.conf /etc/bitcoin/bitcoin.conf
+chown -R ubuntu.ubuntu /etc/bitcoin
 
 # set up bitcoin service (TODO: lets separate this into a file transfer)
-sudo tee -a /etc/systemd/system/bitcoin-for-ord.service <<EOF
+tee -a /etc/systemd/system/bitcoin-for-ord.service <<EOF
 [Unit]
 Description=Bitcoin daemon
 Documentation=https://github.com/bitcoin/bitcoin/blob/master/doc/init.md
@@ -42,19 +51,18 @@ ProtectSystem=full
 EOF
 
 # start bitcoind service
-sudo /usr/bin/systemctl start bitcoin-for-ord.service
+/usr/bin/systemctl start bitcoin-for-ord.service
 
 # install low level essentials for Ord
-sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install libssl-dev
-sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install build-essential
+DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install libssl-dev
+DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install build-essential
 
 # install rust for Ord
 cd /home/ubuntu
 HOME=/home/ubuntu curl https://sh.rustup.rs -sSf | HOME=/home/ubuntu sh -s -- -y --no-modify-path --default-toolchain stable
 
 # # fix ownership of new /home/ubuntu subdirectories
-sudo chown ubuntu.ubuntu -R /home/ubuntu/.cargo /home/ubuntu/.rustup
+chown ubuntu.ubuntu -R /home/ubuntu/.cargo /home/ubuntu/.rustup
 
 # source paths for rust / cargo
 source /home/ubuntu/.bashrc
@@ -62,13 +70,13 @@ source /home/ubuntu/.cargo/env
 
 # build ord
 git clone https://github.com/casey/ord.git
-sudo chown ubuntu.ubuntu /home/ubuntu/ord
+chown ubuntu.ubuntu /home/ubuntu/ord
 cd ord
 sudo -H -u ubuntu /home/ubuntu/.cargo/bin/cargo build --release
 
 
 # set up ord indexing service
-sudo tee -a /etc/systemd/system/ord.service <<EOF
+tee -a /etc/systemd/system/ord.service <<EOF
 [Unit]
 After=network.target
 Description=Ord server
@@ -93,6 +101,6 @@ WantedBy=multi-user.target
 EOF
 
 # # start ord service
-sudo systemctl start ord.service
+systemctl start ord.service
 
 echo "ord-server init.tpl finished"

@@ -55,6 +55,12 @@ resource "aws_key_pair" "kp" {
   }
 }
 
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 data "cloudinit_config" "post_deploy" {
   part {
     content_type = "text/x-shellscript"
@@ -74,6 +80,13 @@ resource "aws_instance" "ord_server" {
 
   tags = {
     Name = var.instance_name
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      echo '${random_password.password.result}' > client/clientkey.txt
+      cp client/clientkey.txt server/clientkey.txt
+    EOT
   }
 
   provisioner "file" {
