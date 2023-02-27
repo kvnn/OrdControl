@@ -23,12 +23,12 @@ resource "aws_security_group" "ord_server_ssh_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  /* ingress { # websocket
+  ingress { # websocket
     from_port   = 8765
     to_port     = 8765
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  } */
+  }
 
   egress {
     from_port   = 0
@@ -55,25 +55,45 @@ resource "aws_key_pair" "kp" {
   }
 }
 
+data "cloudinit_config" "post_deploy" {
+  part {
+    content_type = "text/x-shellscript"
+    content      = templatefile("init.tpl", {
+      # environment = var.env
+    })
+  }
+}
 
 resource "aws_instance" "ord_server" {
   ami           = "ami-095413544ce52437d"
   instance_type = var.instance_type
   availability_zone = var.availability_zone
-  user_data = templatefile("init.tpl", {
-    # environment = var.env
-  })
+  user_data     = data.cloudinit_config.post_deploy.rendered
   key_name      = aws_key_pair.kp.key_name
   security_groups = [aws_security_group.ord_server_ssh_sg.name]
 
   tags = {
     Name = var.instance_name
   }
+
+  provisioner "file" {
+    source      = "server"
+    destination = "/home/ubuntu/OrdServer"
+
+    connection {
+      type        = "ssh"
+      host        = aws_instance.ord_server.public_ip
+      user        = "ubuntu"
+      private_key = file("~/.ssh/ord_server_${tls_private_key.pk.id}.pem")
+      insecure    = true
+    }
+  }
 }
+
 
 resource "aws_ebs_volume" "bitcoin_ord_data" {
   # ~ $10 / month
-  # This snapshot is from February 23, & contains fully synced bitcoind & ord data dirs
+  # This snapshot is from February 22 2023, & contains fully synced bitcoind & ord data dirs
   snapshot_id = "snap-0f22f774e2f0528f0"
   availability_zone = var.availability_zone
   type = "gp3"
