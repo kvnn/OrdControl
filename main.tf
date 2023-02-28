@@ -84,8 +84,10 @@ resource "aws_instance" "ord_server" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      echo '${random_password.password.result}' > client/clientkey.txt
-      cp client/clientkey.txt server/clientkey.txt
+      echo 'window.OrdServer = window.OrdServer || {};' > client/js/env.js
+      echo 'window.OrdServer.password="${random_password.password.result}";' >> client/js/env.js
+      echo 'window.OrdServer.wsurl="${aws_instance.ord_server.public_dns}";' >> client/js/env.js
+      cp client/js/env.js server/client-env.js.txt
     EOT
   }
 
@@ -107,7 +109,7 @@ resource "aws_instance" "ord_server" {
 resource "aws_ebs_volume" "bitcoin_ord_data" {
   # ~ $10 / month
   # This snapshot is from February 22 2023, & contains fully synced bitcoind & ord data dirs
-  snapshot_id = "snap-0f22f774e2f0528f0"
+  snapshot_id = var.snapshot_id
   availability_zone = var.availability_zone
   type = "gp3"
 

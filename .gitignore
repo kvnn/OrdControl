@@ -7,3 +7,4 @@ lambdas/python
 env
 node_modules
 .terraform
+env.js

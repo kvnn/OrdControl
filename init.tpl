@@ -75,7 +75,7 @@ cd ord
 sudo -H -u ubuntu /home/ubuntu/.cargo/bin/cargo build --release
 
 
-# set up ord indexing service
+# set up ord indexing service to run hourly
 tee -a /etc/systemd/system/ord.service <<EOF
 [Unit]
 After=network.target
@@ -97,7 +97,7 @@ User=ubuntu
 Group=ubuntu
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=cron-hourly.target
 EOF
 
 # # start ord service
