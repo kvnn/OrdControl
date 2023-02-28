@@ -1,0 +1,21 @@
+[Unit]
+After=network.target
+Description=Ord server
+StartLimitBurst=120
+StartLimitIntervalSec=10m
+
+[Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Environment=RUST_BACKTRACE=1
+Environment=RUST_LOG=info
+ExecStart=/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord index
+Restart=on-failure
+# bitcoind may need to finish syncing, so lets keep a long restart time
+RestartSec=60s
+TimeoutStopSec=3000m
+Type=simple
+User=ubuntu
+Group=ubuntu
+
+[Install]
+WantedBy=multi-user.target

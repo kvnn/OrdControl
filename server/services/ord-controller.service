@@ -1,0 +1,15 @@
+[Unit]
+Description=OrdServer Controller
+Documentation=https://github.com/kvnn/OrdServer/blob/master/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/ubuntu/OrdServer/controller.py
+Type=idle
+Restart=on-failure
+User=ubuntu
+Group=ubuntu
+
+[Install]
+WantedBy=multi-user.target
