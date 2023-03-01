@@ -17,7 +17,7 @@ variable "availability_zone" {
 
 variable "snapshot_id" {
   type = string
-  default = "snap-0f22f774e2f0528f0"
+  default = "snap-05c8c45d2ec608e39"
 }
 
 variable "instance_type" {
