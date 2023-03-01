@@ -1,0 +1,97 @@
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blinker 1s linear infinite;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.main {
+    position: relative;
+}
+
+
+code {
+    font-size: 0.7em;
+}
+
+    code.black {
+        color: #333;
+    }
+
+    code .black {
+        color: #333;
+    }
+
+    code p {
+        margin: 8px 0;
+    }
+
+#status-bitcoind.restarting {
+    animation: blinker 1s linear infinite;
+}
+
+    .status h4 {
+        text-align: center;
+    }
+
+    #status-websocket {
+        max-width: 900px;
+        text-align: center;
+        font-size: 1em;
+    }
+
+    #status-websocket .open {
+        display: none;
+    }
+
+    #status-websocket.open .open {
+        display: inline;
+    }
+
+    #status-websocket.open .reconnecting {
+        display: none;
+    }
+
+    #status-websocket.reconnecting .reconnecting {
+        display: inline;
+        animation: blinker 1s linear infinite;
+    }
+
+    #status-websocket.reconnecting .open {
+        display: none;
+    }
+
+    .status .control {
+        text-align: right;
+    }
+
+    /* #status-ord.started .start {
+        display: none;
+    }
+
+    #status-ord.stopped .stop {
+        display: none;
+    } */
+
+    #status-ord .restart {
+        display: none;
+    }
+
+    #status-bitcoind .start {
+        display: none;
+    }
+
+    #status-bitcoind .stop {
+        display: none;
+    }
+
+    #status-bitcoind.restarting .restart {
+        display: none;
+    }

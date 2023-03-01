@@ -7,6 +7,7 @@ import websockets
 
 CLIENTS = set()
 
+ord_wallet = {}
 
 async def echo(websocket):
     async for message in websocket:
@@ -19,7 +20,9 @@ async def exec(websocket):
         print(f'websocket recvd {message}')
         output = None
         try:
-            if message == 'bitcoind restart':
+            if message == 'websocket restart':
+                subprocess.Popen(['sudo', 'systemctl', 'restart', 'ord-controller.service'])
+            elif message == 'bitcoind restart':
                 p1 = subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'])
                 p1.wait()
                 output = get_bitcoind_status()
@@ -44,7 +47,7 @@ async def exec(websocket):
             await websocket.send(f'Exception: {e}')
 
 
-def get_ps_as_dict(ps_output):
+def get_ps_as_dicts(ps_output):
     output = []
     headers = [h for h in ' '.join(ps_output[0].decode('ascii').strip().split()).split() if h]
     if len(ps_output) > 1:
@@ -56,7 +59,9 @@ def get_ps_as_dict(ps_output):
 
 def get_ord_status():
     ps = subprocess.Popen(['ps aux | head -1; ps aux | grep "[o]rd"'], stdout=subprocess.PIPE, shell=True).stdout.readlines()
-    output = {"status-ord": get_ps_as_dict(ps)}
+    output = get_ps_as_dicts(ps)
+    output = [row for row in output if 'start ord-controller.service' not in row['COMMAND'] and '/usr/local/bin/bitcoin/bin/bitcoind' not in row['COMMAND']]
+    output = {"status-ord": output}
     return json.dumps(output)
 
 
@@ -66,8 +71,18 @@ def get_bitcoind_status():
     if len(pid_search) == 1:
         pid = pid_search[0].decode('ascii').replace('\n', '')
     ps = subprocess.Popen([f'ps -p {pid} -o user,pid,ppid,%cpu,%mem,vsz,rss,tty,stat,start,time,command'], shell=True, stdout=subprocess.PIPE).stdout.readlines()
-    output = {"status-bitcoind": get_ps_as_dict(ps)}
+    output = {"status-bitcoind": get_ps_as_dicts(ps)}
     return json.dumps(output)
+
+
+def get_ord_wallet():
+    global ord_wallet
+
+    # wallet help
+    if 'help' not in ord_wallet:
+        output = subprocess.run(['/home/ubuntu/ord/target/release/ord', 'wallet', 'help'], stdout=subprocess.PIPE)
+        ord_wallet['help'] = output.stdout.decode('ascii')
+    return json.dumps({"ord_wallet": ord_wallet})
 
 
 async def broadcast(message):
@@ -77,11 +92,11 @@ async def broadcast(message):
         except websockets.ConnectionClosed:
             pass
 
-
 async def broadcast_messages():
     while True:
         await broadcast(get_bitcoind_status())
         await broadcast(get_ord_status())
+        await broadcast(get_ord_wallet())
         await asyncio.sleep(5)
 
 

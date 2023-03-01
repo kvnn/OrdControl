@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+
+<html>
+  <head>
+    <title>Controller | Ord Server</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link type="text/css" rel="stylesheet" href="css/spin.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/> -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/reconnecting_websocket.min.js"></script>
+
+    <script src="js/utils.js"></script>
+    <script src="js/status-ui.js"></script>
+    <script src="js/env.js"></script>
+    <script src="js/websocket.js"></script>
+    
+
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="navbar-brand reconnecting" id="status-websocket" href="#">
+        <!-- <code class="open"> -->
+          <div class="open alert alert-success">
+            <span class="material-symbols-outlined" alt="connected">
+              cell_tower
+            </span>
+            <code class="black">websocket connected</code>
+          </div>
+        <!-- </code> -->
+        <!-- <code class="reconnecting"> -->
+          <div class="reconnecting alert alert-danger">
+            <span class="material-symbols-outlined">
+              cell_tower
+            </span>
+            <code>websocket reconnecting</code>
+          </div>
+        <!-- </code> -->
+        <a href="#" title="restart" class="restart material-symbols-outlined">
+          restart_alt
+        </a>
+      </div>
+      <button class="navbar-toggler pull-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+
+    <div class="main container-fluid">
+      <div class="row">
+        <div class="col-sm-12 col-md-6 status" id="status-bitcoind">
+          <h4>bitcoind</h4>
+          <div class="details">
+            <div class="card blink align-center">
+              <code class="card-body">waiting...</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6 status" id="status-ord">
+          <h4>ord</h4>
+          <div class="details">
+            <div class="card blink align-center">
+              <code class="card-body">waiting...</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+
+
+</html>
