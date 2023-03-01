@@ -81,8 +81,9 @@ def get_ord_wallet():
     # wallet help
     if 'help' not in ord_wallet:
         output = subprocess.run(['/home/ubuntu/ord/target/release/ord', 'wallet', 'help'], stdout=subprocess.PIPE)
-        ord_wallet['help'] = output.stdout.decode('ascii')
-    return json.dumps({"ord_wallet": ord_wallet})
+        output = output.stdout.decode('ascii')
+        ord_wallet['help'] = output
+    return json.dumps({"info-ord-wallet": ord_wallet})
 
 
 async def broadcast(message):

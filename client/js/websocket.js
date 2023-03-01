@@ -1,7 +1,3 @@
-console.log('window.OrdServer.wsurl', window.OrdServer.wsurl);
-
-console.log('window.OrdServer.password', window.OrdServer.password);
-
 const url = `ws://${window.OrdServer.wsurl}:8765`;
 
 socket = new ReconnectingWebSocket(url);
@@ -28,6 +24,10 @@ socket.onmessage = (msg)=>{
 
     if (data['status-ord']) {
         setOrdStatus(data['status-ord'])
+    }
+
+    if (data['info-ord-wallet']) {
+        setOrdWallet(data['info-ord-wallet'])
     }
 }
 

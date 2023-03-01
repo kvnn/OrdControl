@@ -60,6 +60,11 @@ function setOrdStatus(data) {
     $('#status-ord .details').html(statusHtml);
 }
 
+function setOrdWallet(data) {
+    console.log('setOrdWallet', data);
+    $('#status-ord .info-wallet code').html(data['help'])
+}
+
 $(function(){
     $('#status-websocket').on('click', '.restart', evt=>{
         evt.preventDefault();
