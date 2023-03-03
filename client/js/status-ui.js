@@ -74,7 +74,7 @@ $(function(){
 
     $('#status-ord').on('click', '.start', evt=>{
         evt.preventDefault();
-        window.socket.send('ord start');
+        window.socket.send('ord index restart');
     });
 
     $('#status-ord stop').click(evt=>{

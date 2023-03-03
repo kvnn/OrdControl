@@ -26,8 +26,8 @@ socket.onmessage = (msg)=>{
         setBitcoindStatus(data['status-bitcoind'])
     }
 
-    if (data['status-ord']) {
-        setOrdStatus(data['status-ord'])
+    if (data['processes-ord']) {
+        setOrdStatus(data['processes-ord'])
     }
 }
 

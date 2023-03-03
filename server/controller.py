@@ -1,6 +1,7 @@
 import asyncio
 import json
 import subprocess
+from threading import Thread
 
 import websockets
 
@@ -23,24 +24,9 @@ async def exec(websocket):
             if message == 'websocket restart':
                 subprocess.Popen(['sudo', 'systemctl', 'restart', 'ord-controller.service'])
             elif message == 'bitcoind restart':
-                p1 = subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'])
-                p1.wait()
-                output = get_bitcoind_status()
-            elif message == 'ord start':
-                p1 = subprocess.Popen(['ord', '--bitcoin-data-dir=/var/lib/bitcoind', 'index'])
-                # p1.wait()
-                output = get_ord_status()
-            elif message == 'ord stop':
-                # output = subprocess.run(['shutdown', '-r', 'now'], capture_output=True)
-                print('ord stop')
-            # else:
-            #     cmds = message.split(' ')
-            #     if cmds[0] != 'ord':
-            #         cmds.insert(0, 'ord')
-            #     if cmds[1] != '--bitcoin-data-dir=/var/lib/bitcoind':
-            #         cmds.insert(1, '--bitcoin-data-dir=/var/lib/bitcoind')
-            #     output = subprocess.Popen(cmds)
-            #     print(f'output is {output}')
+                subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'])
+            elif message == 'ord index restart':
+                subprocess.Popen(['sudo','systemctl', 'restart', 'ord.service'])
             await websocket.send(output)
         except Exception as e:
             print(f'Exception: {e}')
@@ -57,12 +43,34 @@ def get_ps_as_dicts(ps_output):
     return output
 
 
-def get_ord_status():
+ord_index_output = []
+
+def get_ord_indexing_details():
+    global ord_index_output
+    ord_index_output.append('looking for ord index...')
+    ps = subprocess.Popen(['ps aux | head -1; ps aux | grep "[/]home/ubuntu/ord/target/release/ord"'], stdout=subprocess.PIPE, shell=True).stdout.readlines()
+    output = get_ps_as_dicts(ps)
+    if len(output):
+        pid = output[0]['PID']
+        ord_index_output.append(f'found PID {pid}')
+        # see https://stackoverflow.com/questions/54091396/live-output-stream-from-python-subprocess/54091788#54091788
+        with subprocess.Popen([f'sudo strace -qfp  {pid} -e trace=write -e write=1,2'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            ord_index_output.append('running strace...')
+            for line in process.stdout:
+                ord_index_output.append(line.decode('ascii'))
+
+def get_ord_indexing_output():
+    global ord_index_output
+    return json.dumps({"ord_index_output": ord_index_output})
+
+
+def get_ord_processes():
     ps = subprocess.Popen(['ps aux | head -1; ps aux | grep "[o]rd"'], stdout=subprocess.PIPE, shell=True).stdout.readlines()
     output = get_ps_as_dicts(ps)
     output = [row for row in output if 'start ord-controller.service' not in row['COMMAND'] and '/usr/local/bin/bitcoin/bin/bitcoind' not in row['COMMAND']]
-    output = {"status-ord": output}
-    return json.dumps(output)
+    return json.dumps({
+        'processes-ord': output
+    })
 
 
 def get_bitcoind_status():
@@ -93,10 +101,13 @@ async def broadcast(message):
             pass
 
 async def broadcast_messages():
+    global ord_index_output
     while True:
         await broadcast(get_bitcoind_status())
-        await broadcast(get_ord_status())
+        await broadcast(get_ord_processes())
         await broadcast(get_ord_wallet())
+        await broadcast(get_ord_indexing_output())
+        print(f'ord_index_output is {ord_index_output}')
         await asyncio.sleep(5)
 
 
@@ -105,5 +116,8 @@ async def main():
         # await asyncio.Future()  # run forever
         await broadcast_messages()  # runs forever
 
+
+t1 = Thread(target=get_ord_indexing_details)
+t1.start()
 
 asyncio.run(main())
