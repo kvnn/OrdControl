@@ -1,6 +1,6 @@
 
 # OrdServer
-This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance.
+This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (which currently can restart the websocket server, restart bitcoind and start ord index).
 
 
 ## Quickstart
@@ -18,6 +18,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 <!-- COMING SOON 6. run the visibility / control client:
    1. `python3 -m http.server -d client 8888`
    2. http://localhost:8888 -->
+7. EXPERIMENTAL: uncomment the websocket ingress in `main.tf` before step 5 and open the client's `index.html` in your browser (no need for an http server). E.g. file:///Users/kevin/Projects/OrdServer/client/index.html
 
 
 
@@ -33,14 +34,15 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 ## TODO
 - server
   - [ ] verify that `bitcoin-cli` works
-  - [ ] include controller websocket server (VERY SOON)
-    - [ ] add authentication token via terraform
+  - [x] include controller websocket server
+    - [x] add authentication token via terraform
+    - [ ] actually *use* the auth token
   - [ ] implement Inscription functionality
     - [ ] resilient queueing
     - [ ] smart queue consumer
     - [ ] light database for managing queued Inscriptions
 - client
-  - [ ] release MVP (VERY SOON)
+  - [x] release MVP
   - [ ] include `bitcoin-cli` controls
   - [ ] finish Ord controls
   - [ ] implement Inscription functionality
