@@ -36,7 +36,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   - [ ] verify that `bitcoin-cli` works
   - [x] include controller websocket server
     - [x] add authentication token via terraform
-    - [ ] actually *use* the auth token
+    - [x] actually *use* the auth token
   - [ ] implement Inscription functionality
     - [ ] resilient queueing
     - [ ] smart queue consumer
