@@ -6,9 +6,9 @@ echo "ord-server init.tpl starting"
 
 
 # install OrdServer controller
-cd /home/ubuntu/OrdServer
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install python3-pip
+cd /home/ubuntu/OrdServer
 chown -R ubuntu.ubuntu /home/ubuntu/OrdServer
 sudo -H -u ubuntu pip3 install -r requirements.txt
 

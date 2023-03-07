@@ -57,8 +57,7 @@ resource "aws_key_pair" "kp" {
 
 resource "random_password" "password" {
   length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  special          = false
 }
 
 data "cloudinit_config" "post_deploy" {

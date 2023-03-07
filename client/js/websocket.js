@@ -1,7 +1,3 @@
-console.log('window.OrdServer.wsurl', window.OrdServer.wsurl);
-
-console.log('window.OrdServer.password', window.OrdServer.password);
-
 const url = `ws://${window.OrdServer.wsurl}:8765`;
 
 socket = new ReconnectingWebSocket(url);
@@ -32,6 +28,7 @@ socket.onmessage = (msg)=>{
 }
 
 socket.onopen = ()=>{
+    socket.send(`token:${window.OrdServer.password}`);
     $('#status-websocket').removeClass('reconnecting').addClass('open')
 }
 

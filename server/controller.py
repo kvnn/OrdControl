@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import subprocess
 from threading import Thread
 
@@ -10,27 +11,41 @@ CLIENTS = set()
 
 ord_wallet = {}
 
+# get our terraform-generated password (see main.tf)
+ourpath = os.path.dirname(os.path.realpath(__file__))
+filepath = os.path.join(ourpath, 'client-env.js.txt')
+token_file = open(filepath, 'r')
+token = token_file.read()
+token = token.split('window.OrdServer.password="')[1].split('";')[0]
+
+
 async def echo(websocket):
     async for message in websocket:
         await websocket.send(message)
 
 
 async def exec(websocket):
-    CLIENTS.add(websocket)
-    async for message in websocket:
-        print(f'websocket recvd {message}')
-        output = None
-        try:
-            if message == 'websocket restart':
-                subprocess.Popen(['sudo', 'systemctl', 'restart', 'ord-controller.service'])
-            elif message == 'bitcoind restart':
-                subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'])
-            elif message == 'ord index restart':
-                subprocess.Popen(['sudo','systemctl', 'restart', 'ord.service'])
-            await websocket.send(output)
-        except Exception as e:
-            print(f'Exception: {e}')
-            await websocket.send(f'Exception: {e}')
+    client_token = await websocket.recv()
+    client_token = client_token.split('token:')[1]
+    if token == client_token:
+        CLIENTS.add(websocket)
+        async for message in websocket:
+            print(f'websocket recvd {message}')
+            output = None
+            try:
+                if message == 'websocket restart':
+                    subprocess.Popen(['sudo', 'systemctl', 'restart', 'ord-controller.service'])
+                elif message == 'bitcoind restart':
+                    subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'])
+                elif message == 'ord index restart':
+                    subprocess.Popen(['sudo','systemctl', 'restart', 'ord.service'])
+                await websocket.send(output)
+            except Exception as e:
+                print(f'Exception: {e}')
+                await websocket.send(f'Exception: {e}')
+    else:
+        await websocket.close(1011, "authentication failed")
+        return
 
 
 def get_ps_as_dicts(ps_output):
@@ -88,8 +103,11 @@ def get_ord_wallet():
 
     # wallet help
     if 'help' not in ord_wallet:
-        output = subprocess.run(['/home/ubuntu/ord/target/release/ord', 'wallet', 'help'], stdout=subprocess.PIPE)
-        ord_wallet['help'] = output.stdout.decode('ascii')
+        try:
+            output = subprocess.run(['/home/ubuntu/ord/target/release/ord', 'wallet', 'help'], stdout=subprocess.PIPE)
+            ord_wallet['help'] = output.stdout.decode('ascii')
+        except FileNotFoundError:
+            ord_wallet['help'] = "ord binary doesn't exist (yet... it should be building now)"
     return json.dumps({"ord_wallet": ord_wallet})
 
 
