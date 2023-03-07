@@ -106,8 +106,7 @@ resource "aws_instance" "ord_server" {
 
 
 resource "aws_ebs_volume" "bitcoin_ord_data" {
-  # ~ $10 / month
-  # This snapshot is from February 22 2023, & contains fully synced bitcoind & ord data dirs
+  # This snapshot is from February 27 2023, & contains fully synced bitcoind & ord data dirs
   snapshot_id = var.snapshot_id
   availability_zone = var.availability_zone
   type = "gp3"
