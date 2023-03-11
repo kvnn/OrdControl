@@ -32,10 +32,16 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 ## TODO
 - server
-  - [ ] verify that `bitcoin-cli` works
+  - [x] alert UI if ec2/boto credentials error occurs, allow server restart
+  - [ ] allow server restart regardless of the above
+  - [x] show journalctl alerts / errors in UI 
+  - [ ] verify that `bitcoin-cli` work, play with it
   - [x] include controller websocket server
     - [x] add authentication token via terraform
     - [x] actually *use* the auth token
+  - [x] add "Name: OrdServer" tag to all aws resources
+  - [ ] add Dynamo table and make controller save Ord indexing status to it (via strace / `get_ord_indexing_details`)
+  - [ ] split controller.py into a module, split out the ord-indexing watcher / logger
   - [ ] implement Inscription functionality
     - [ ] resilient queueing
     - [ ] smart queue consumer

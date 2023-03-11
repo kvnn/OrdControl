@@ -72,15 +72,15 @@ code {
         text-align: right;
     }
 
-    /* #status-ord.started .start {
+    /* #ord-indexing-service-status.started .start {
         display: none;
     }
 
-    #status-ord.stopped .stop {
+    #ord-indexing-service-status.stopped .stop {
         display: none;
     } */
 
-    #status-ord .restart {
+    #ord-indexing-service-status .restart {
         display: none;
     }
 
@@ -95,3 +95,8 @@ code {
     #status-bitcoind.restarting .restart {
         display: none;
     }
+
+.status .card-body {
+    max-height: 350px;
+    overflow-y: scroll;
+}

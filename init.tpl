@@ -5,9 +5,14 @@ echo "ord-server init.tpl starting"
 # to view this script in instance: `sudo cat /var/lib/cloud/instances/{instance_id}/user-data.txt`
 
 
-# install OrdServer controller
+# install OrdServer linux dependencies
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install python3-pip
+
+# wait for OrdServer file transfer to complete ... otherwise, on slow connections, we may get a "directory doesn't exist" error
+while [ ! -d /home/ubuntu/OrdServer ]; do echo "waiting for /home/ubuntu/OrdServer to exist..." && sleep 1; done
+
+# install OrdServer python dependencies
 cd /home/ubuntu/OrdServer
 chown -R ubuntu.ubuntu /home/ubuntu/OrdServer
 sudo -H -u ubuntu pip3 install -r requirements.txt
@@ -67,7 +72,7 @@ cd ord
 sudo -H -u ubuntu /home/ubuntu/.cargo/bin/cargo build --release
 
 # # start ord service
-/usr/bin/systemctl enable ord.service
-/usr/bin/systemctl start ord.service
+/usr/bin/systemctl enable ord.timer
+/usr/bin/systemctl start ord.timer
 
 echo "ord-server init.tpl finished"

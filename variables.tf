@@ -1,5 +1,5 @@
-variable "instance_name" {
-  description = "Value of the Name tag for the EC2 instance"
+variable "resource_tag_name" {
+  description = "Value of the Name tag for AWS resources"
   type        = string
   default     = "OrdServer"
 }

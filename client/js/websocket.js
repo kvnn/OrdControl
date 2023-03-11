@@ -18,12 +18,24 @@ socket.onmessage = (msg)=>{
         console.log('cannot parse websocket data', err);
     }
 
-    if (data['status-bitcoind']) {
-        setBitcoindStatus(data['status-bitcoind'])
+    if (data['status_bitcoind']) {
+        setBitcoindStatus(data['status_bitcoind'])
     }
 
-    if (data['processes-ord']) {
-        setOrdStatus(data['processes-ord'])
+    if (data['ord_index_service_status']) {
+        setOrdIndexServiceStatus(data['ord_index_service_status'])
+    }    
+
+    if (data['ord_wallet']) {
+        setOrdWalletInfo(data['ord_wallet'])
+    }
+
+    if (data['boto3_credentials_not_found']) {
+        setEc2BotoCredsError();
+    }
+
+    if (data['journalctl_alerts']) {
+        setJournalCtlAlerts(data['journalctl_alerts']);
     }
 }
 
