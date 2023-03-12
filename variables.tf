@@ -17,7 +17,8 @@ variable "availability_zone" {
 
 variable "snapshot_id" {
   type = string
-  default = "snap-05c8c45d2ec608e39"
+  # march 12 2023 : data dir synced w/ bitcoind and ord
+  default = "snap-0e20148c69de271c8"
 }
 
 variable "instance_type" {

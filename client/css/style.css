@@ -1,21 +1,7 @@
-@keyframes blinker {
-    50% {
-        opacity: 0;
-    }
-}
-
-.blink {
-    animation: blinker 1s linear infinite;
-}
-
-.align-center {
-    text-align: center;
-}
 
 .main {
     position: relative;
 }
-
 
 code {
     font-size: 0.7em;
@@ -33,13 +19,7 @@ code {
         margin: 8px 0;
     }
 
-#status-bitcoind.restarting {
-    animation: blinker 1s linear infinite;
-}
 
-    .status h4 {
-        text-align: center;
-    }
 
     #status-websocket {
         max-width: 900px;
@@ -68,35 +48,19 @@ code {
         display: none;
     }
 
-    .status .control {
-        text-align: right;
-    }
-
-    /* #ord-indexing-service-status.started .start {
-        display: none;
-    }
-
-    #ord-indexing-service-status.stopped .stop {
-        display: none;
-    } */
 
     #ord-indexing-service-status .restart {
         display: none;
     }
 
-    #status-bitcoind .start {
+    #bitcoind-status .start {
         display: none;
     }
 
-    #status-bitcoind .stop {
+    #bitcoind-status .stop {
         display: none;
     }
 
-    #status-bitcoind.restarting .restart {
+    #bitcoind-status.restarting .restart {
         display: none;
     }
-
-.status .card-body {
-    max-height: 350px;
-    overflow-y: scroll;
-}

@@ -1,20 +1,8 @@
 function getPsStatusHtml(data) {
     let statusHtml = '';
 
-    if (data.length == 0) {
-        statusHtml += '<div class="card"><code class="card-body row">';
-        statusHtml += '<div class="col-sm-9">no processes found</div>';
-        statusHtml += `
-            <div class="col-sm-3 control">
-                <a href="#" title="start" class="start material-symbols-outlined">
-                    start
-                </a>
-            </div>`;
-        statusHtml += '</div></div>';
-    }
-
     data.forEach(row => {
-        statusHtml += '<div class="card"><code class="card-body row">';
+        statusHtml += '<code class="card-body row">';
         statusHtml += '<div class="col-sm-9">'
         statusHtml += `<p class="black">${row['COMMAND']}</p>`;
         statusHtml += `<p>PID ${row['PID']} %MEM ${row['%MEM']} %CPU ${row['%CPU']} TIME ${row['TIME']}</p>`;
@@ -33,7 +21,7 @@ function getPsStatusHtml(data) {
                     restart_alt
                 </a>
             </div>`;
-        statusHtml += '</code></div>';
+        statusHtml += '</code>';
     });
 
 
@@ -41,33 +29,45 @@ function getPsStatusHtml(data) {
 }
 
 function setBitcoindStatus(data) {
-    let statusHtml = getPsStatusHtml(data);
+    let statusHtml = '';
 
-    $('#status-bitcoind').removeClass('restarting')
+    if (data.length == 0) {
+        statusHtml = '<p>process not found</p>';
+        statusHtml += `
+            <div class="col-sm-3 control">
+                <a href="#" title="start" class="start material-symbols-outlined">
+                    start
+                </a>
+            </div>`;
+    } else {    
+        statusHtml = getPsStatusHtml(data);
+    }
 
-    $('#status-bitcoind .details').html(statusHtml);
+    $('#bitcoind-status-content').html(statusHtml);
+    $('#bitcoind-status').removeClass('waiting');
 }
 
 function setOrdIndexServiceStatus(data) {
     // let statusHtml = getPsStatusHtml(data);
-    let statusHtml = '<div class="card"><div class="card-body">';
-    statusHtml += '<code>';
+    let statusHtml = '<code>';
     statusHtml += data;
     statusHtml = statusHtml.replaceAll('\\n', '<br>');
     statusHtml += '</code>';
-    statusHtml += '</div></div>';
 
-    if (data.length == 0) {
-        $('#ord-indexing-service-status').removeClass('started').addClass('stopped');
-    } else {
-        $('#ord-indexing-service-status').addClass('started').removeClass('stopped');
-    }
+    $('#ord-indexing-service-status-content').html(statusHtml);
+    $('#ord-indexing-service-status').removeClass('waiting');
+}
 
-    $('#ord-indexing-service-status .details').html(statusHtml);
+function printOrdInscriptions(content) {
+    content = `<code>${content}</code>`;
+    $('#inscriptions-content').html(content);
+    $('#ord-wallet').removeClass('waiting');
 }
 
 function setOrdWalletInfo(data) {
     console.log('wallet', data);
+
+    printOrdInscriptions(data['inscriptions'].replaceAll('\\n', '<br>'));
 }
 
 function setEc2BotoCredsError() {
@@ -82,16 +82,16 @@ function setEc2BotoCredsError() {
                         restart_alt
                     </a>`;
     statusHtml += '</div></div>';
-    $('#system-wide-alerts .boto3').html(statusHtml);
+    $('#boto3-alerts-content').html(statusHtml);
+    $('#system-alerts').removeClass('waiting');
 }
 
 function setJournalCtlAlerts(data) {
-    let statusHtml = '<div class="card"><div class="card-body">';
-    statusHtml += '<code>';
+    statusHtml = '<code>';
     statusHtml += data.replaceAll('\\n', '<br>');
     statusHtml += '</code>';
-    statusHtml += '</div></div>';
-    $('#system-wide-alerts .journalctl').html(statusHtml);
+    $('#journalctl-content').html(statusHtml);
+    $('#system-alerts').removeClass('waiting');
     return statusHtml
 }
 
@@ -101,21 +101,21 @@ $(function(){
         window.socket.send('websocket restart');
     });
 
-    $('#status-bitcoind').on('click', '.restart', evt=>{
+    $('#bitcoind-status').on('click', '.restart', evt=>{
         evt.preventDefault();
         window.socket.send('bitcoind restart');
-        $('#status-bitcoind').addClass('restarting')
+        $('#bitcoind-status').addClass('restarting')
     });
 
-    $('#ord-indexing-service-status').on('click', '.start', evt=>{
-        evt.preventDefault();
-        window.socket.send('ord index restart');
-    });
+    // $('#ord-indexing-service-status').on('click', '.start', evt=>{
+    //     evt.preventDefault();
+    //     window.socket.send('ord index restart');
+    // });
 
-    $('#ord-indexing-service-status stop').click(evt=>{
-        evt.preventDefault();
-        window.socket.send('ord stop');
-    });
+    // $('#ord-indexing-service-status stop').click(evt=>{
+    //     evt.preventDefault();
+    //     window.socket.send('ord stop');
+    // });
 
     $('#server').on('click', '.restart', evt=>{
         evt.preventDefault();

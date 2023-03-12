@@ -23,8 +23,8 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 
 ## Details
-- as of March 6 2023, this setup is costing me about $13 / day, which is almost entirely EC2 costs
-- it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to February 27 2013
+- it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to March 12 2023
+- as of March 6 2023, this setup is costing me about $13 / day, which is almost entirely EC2 costs. I'll sometimes run `terraform --auto-approve destroy` when I know I won't be using it
 - you can change regions, availability zones and instance types in `variables.tf`. Note that the data drive mount may fail for instances that use `nvme` type drives, and it may fail for other regions. If you have a use-case you need help with, feel free to create an Issue.
 - the AMI used is a standard AWS AMI
 - see `init.tpl` for the scripting done to your server (e.g. to make sure there are no backdoors here)
@@ -48,6 +48,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [ ] light database for managing queued Inscriptions
 - client
   - [x] release MVP
+  - [ ] clean up js / css
   - [ ] include `bitcoin-cli` controls
   - [ ] finish Ord controls
   - [ ] implement Inscription functionality

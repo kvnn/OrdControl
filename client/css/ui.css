@@ -1,0 +1,30 @@
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+/* e.g. #ord-wallet */
+.status-container {
+
+}
+    .status-container h4 {
+        text-align: center;
+    }
+
+    .status-container .control {
+        text-align: right;
+    }
+
+    /* before our websocket brings data */
+    .status-container.waiting .card {
+        text-align: center;
+        animation: blinker 1s linear infinite;
+    }
+
+        .status-container .card-body {
+            max-height: 350px;
+            overflow-y: scroll;
+        }
