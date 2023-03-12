@@ -18,8 +18,8 @@ socket.onmessage = (msg)=>{
         console.log('cannot parse websocket data', err);
     }
 
-    if (data['status_bitcoind']) {
-        setBitcoindStatus(data['status_bitcoind'])
+    if (data['bitcoind_status']) {
+        setBitcoindStatus(data['bitcoind_status'])
     }
 
     if (data['ord_index_service_status']) {
