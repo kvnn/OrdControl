@@ -25,8 +25,9 @@ token = token_file.read()
 token = token.split('window.OrdServer.password="')[1].split('";')[0]
 
 
-def _build_dynamo_item(id, name, details):
+def _build_dynamo_item(name, details):
     now = datetime.utcnow().isoformat()
+    id = f'{name}-{now}'
     return {
         'Id': {
             'S': str(id)
@@ -43,8 +44,8 @@ def _build_dynamo_item(id, name, details):
     }
 
 
-def _put_dynamo_item(id, name, details=''):
-    return dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(id, name, details))
+def _put_dynamo_item(name, details=''):
+    return dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(name, details))
 
 def _popen(cmd):
     return subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -97,19 +98,19 @@ async def exec(websocket):
         CLIENTS.add(websocket)
         async for message in websocket:
             print(f'websocket recvd {message}')
-            output = None
             try:
                 if message == 'websocket restart':
-                    subprocess.Popen(['sudo', 'systemctl', 'restart', 'ord-controller.service'], shell=True, stdout=subprocess.PIPE)
+                    _popen('sudo systemctl restart ord-controller.service')
                 elif message == 'bitcoind restart':
-                    subprocess.Popen(['sudo','systemctl', 'restart', 'bitcoin-for-ord.service'], shell=True, stdout=subprocess.PIPE)
-                elif message == 'ord index restart':
-                    subprocess.Popen(['sudo','systemctl', 'restart', 'ord.service'], shell=True, stdout=subprocess.PIPE)
+                    _popen('sudo systemctl restart bitcoin-for-ord.service')
                 elif message == 'restart restart':
-                    subprocess.Popen(['sudo shutdown -r now'], shell=True, stdout=subprocess.PIPE)
-                await websocket.send(output)
+                    _popen('sudo shutdown -r now')
+                elif message == 'ord wallet create':
+                    create_ord_wallet()
+                elif message == 'ord wallet delete':
+                    delete_ord_wallet()
             except Exception as e:
-                print(f'Exception: {e}')
+                print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
     else:
         await websocket.close(1011, "authentication failed")
@@ -185,19 +186,56 @@ def get_bitcoind_status():
     return json.dumps(output)
 
 
+def create_ord_wallet():
+    try:
+        proc = _popen(f'{ord_command} wallet create')
+        output = [item.decode('ascii') for item in proc.stdout.readlines() if item not in ('{\n', '}\n')]
+        output = ''.join(output)
+
+        err = [item.decode('ascii') for item in proc.stderr.readlines() if item not in ('{\n', '}\n')]
+        err = ''.join(err)
+
+        if len(err):
+            if len(output):
+                err += f'\n\n stdout was {output}'
+            _put_dynamo_item('ord-wallet-error', err)
+        else:
+            _put_dynamo_item('ord-wallet-created', output)
+    except Exception as e:
+        _put_dynamo_item('ord-wallet-error', str(e))
+
+
+def delete_ord_wallet():
+    # be careful
+    now = datetime.utcnow().isoformat()
+    newpath = f'/mnt/bitcoin-ord-data/bitcoin/ord/.old-ord-wallet-{now}'
+    _popen(f'mv /mnt/bitcoin-ord-data/bitcoin/ord/wallet.dat {newpath}')
+    _put_dynamo_item('ord-wallet-disabled', newpath)
+
+
 def get_ord_wallet():
-    ord_wallet = {}
+    ord_wallet = {
+        'file': ''
+    }
+
+    # find the file, if exists
+    proc = _popen('ls -la /mnt/bitcoin-ord-data/bitcoin/ord/wallet.dat')
+    file_output = proc.stdout.readlines()
+    if len(file_output):
+        ord_wallet['file'] = file_output[0].decode('ascii')
+    
 
     # wallet help
     if 'help' not in ord_wallet:
         ord_wallet['help'] = _cmd(f'{ord_command} wallet help')
     
     # inscriptions
-    if 'inscriptions' not in ord_wallet:
+    if len(ord_wallet['file']) and 'inscriptions' not in ord_wallet:
         output, error = _cmd(f'{ord_command} wallet inscriptions')
         ord_wallet['inscriptions'] = output if output else error
         if len(error):
             ord_wallet['inscriptions_error'] = error
+
     return json.dumps({"ord_wallet": ord_wallet})
 
 
@@ -207,6 +245,14 @@ def get_journalctl_alerts():
         'journalctl_alerts': output,
         'journalctl_errors': error
     })
+
+
+def get_dynamo_items():
+    items = dynamodb.scan(TableName='OrdServerTable')
+    items = items['Items']
+    # we should probably change the dybamodb.scan to a .query and sort there
+    items.sort(key = lambda x:x['DateAdded']['S'], reverse=True)
+    return json.dumps({'control_log': items})
     
 
 async def broadcast(message):
@@ -225,6 +271,7 @@ async def broadcast_messages():
         await broadcast(get_ord_wallet())
         await broadcast(get_ord_indexing_output())
         await broadcast(get_journalctl_alerts())
+        await broadcast(get_dynamo_items())
         print(f'ord_index_output is {ord_index_output}')
 
         if ec2_credentials_failure:
@@ -245,7 +292,7 @@ def record_init():
     global ec2_credentials_failure
     now = datetime.utcnow().isoformat()
     try:
-        _put_dynamo_item(now, 'Init')
+        _put_dynamo_item('Init')
     except NoCredentialsError as e:
         # TODO: why can't i find more info on this intermittent problem b/w boto3 and ec2?
         print('boto3 could not get ec2 credentials')

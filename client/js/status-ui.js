@@ -59,15 +59,35 @@ function setOrdIndexServiceStatus(data) {
 }
 
 function printOrdInscriptions(content) {
-    content = `<code>${content}</code>`;
-    $('#inscriptions-content').html(content);
-    $('#ord-wallet').removeClass('waiting');
+    content =   `<code class="black">
+                    <strong>inscriptions:</strong>
+                    <p>${content}</p>
+                </code>`;
+    $('#ord-inscriptions').html(content);
 }
 
 function setOrdWalletInfo(data) {
     console.log('wallet', data);
 
-    printOrdInscriptions(data['inscriptions'].replaceAll('\\n', '<br>'));
+    let walletHtml;
+    if (data.file && data.file.length) {
+        walletHtml = data['file'].split(' ').slice(5).join(' ')
+        walletHtml = `<strong>file: &nbsp;</strong>${walletHtml}`;
+        walletHtml +=   `<a href="#" class="delete-wallet" class="icon-btn">
+                            <span class="material-symbols-outlined">
+                            delete
+                            </span>
+                        </a>`;
+        
+    } else {
+        walletHtml = 'no wallet data'
+    }
+    $('#ord-wallet-file').html(walletHtml);
+    $('#ord-wallet').removeClass('waiting');
+
+    if ('inscriptions' in data)
+        printOrdInscriptions(data['inscriptions'].replaceAll('\\n', '<br>'));
+
 }
 
 function setEc2BotoCredsError() {
@@ -95,6 +115,30 @@ function setJournalCtlAlerts(data) {
     return statusHtml
 }
 
+function setControlLog(data) {
+    console.log('data', data);
+    let html = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">DateAdded</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Details</th>
+                </tr>
+            </thead>
+            <tbody>`;
+    data.forEach(row =>{
+        html += `<tr>
+                    <td>${row.DateAdded.S}</td>
+                    <td>${row.Name.S}</td>
+                    <td>${row.Details.S}</td>
+                 </tr>`;
+    })
+    html += '</tbody></table>';
+    $('#control-log-content').html(html);
+    $('#control-log').removeClass('waiting');
+}
+
 $(function(){
     $('#status-websocket').on('click', '.restart', evt=>{
         evt.preventDefault();
@@ -120,5 +164,15 @@ $(function(){
     $('#server').on('click', '.restart', evt=>{
         evt.preventDefault();
         window.socket.send('restart restart');
+    });
+
+    $('#ord-wallet-new').click(evt => {
+        evt.preventDefault();
+        window.socket.send('ord wallet create');
+    });
+
+    $('#ord-wallet').on('click', '.delete-wallet', evt => {
+        evt.preventDefault();
+        window.socket.send('ord wallet delete');
     });
 })

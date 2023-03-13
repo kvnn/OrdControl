@@ -18,7 +18,27 @@
         text-align: right;
     }
 
-    /* before our websocket brings data */
+    #ord-wallet-new {
+        margin: 8px 0 0 8px;
+    }
+
+    .status-container .icon-btn {
+        font-size: 0.8em;
+        text-decoration: none;
+    }
+
+        .status-container .icon-btn span {
+            vertical-align: bottom;
+        }
+
+        .status-container .icon-btn span:nth-child(2) {
+            vertical-align: center;
+        }
+
+    .status-container.waiting .waiting-hide {
+        display: none;
+    }
+
     .status-container.waiting .card {
         text-align: center;
         animation: blinker 1s linear infinite;
@@ -27,4 +47,8 @@
         .status-container .card-body {
             max-height: 350px;
             overflow-y: scroll;
+        }
+
+        #ord-inscriptions {
+            margin-top: 20px;
         }

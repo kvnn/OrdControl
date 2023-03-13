@@ -37,6 +37,10 @@ socket.onmessage = (msg)=>{
     if (data['journalctl_alerts']) {
         setJournalCtlAlerts(data['journalctl_alerts']);
     }
+
+    if (data['control_log']) {
+        setControlLog(data['control_log'])
+    }
 }
 
 socket.onopen = ()=>{

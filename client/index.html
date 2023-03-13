@@ -60,8 +60,16 @@
           <h4>ord wallet</h4>
           <div class="details">
             <div class="card">
-              <div class="card-body" id="inscriptions-content">
-                waiting...
+              <a href="#" id="ord-wallet-new" class="pull-left waiting-hide icon-btn pull-left">
+                <span class="material-symbols-outlined">
+                  add_box
+                </span>
+                <span>create wallet</span>
+              </a>
+              <div class="card-body">
+                <code class="black" id="ord-wallet-file">waiting...</code>
+                <div class="black" id="ord-inscriptions">
+                </div>
               </div>
             </div>
           </div>
@@ -90,11 +98,11 @@
           </div>
         </div>
 
-        <div class="col-sm-12 col-md-6 status-container waiting" id="event-log">
+        <div class="col-sm-12 col-md-6 status-container waiting" id="control-log">
           <h4>event log</h4>
           <div class="details">
             <div class="card">
-              <div class="card-body">waiting...</div>
+              <div class="card-body" id="control-log-content">waiting...</div>
             </div>
           </div>
         </div>
