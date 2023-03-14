@@ -15,6 +15,8 @@ dynamodb = boto3.client('dynamodb', region_name='us-west-2')
 # globals
 CLIENTS = set()
 ec2_credentials_failure = False
+
+ord_wallet_dir = '/mnt/bitcoin-ord-data/bitcoin/ord'
 ord_command = '/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord'
 
 # get our terraform-generated password (see main.tf)
@@ -45,7 +47,15 @@ def _build_dynamo_item(name, details):
 
 
 def _put_dynamo_item(name, details=''):
-    return dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(name, details))
+    global ec2_credentials_failure
+    try:
+        resp = dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(name, details))
+    except NoCredentialsError as e:
+        # TODO: why can't i find more info on this intermittent problem b/w boto3 and ec2?
+        print('boto3 could not get ec2 credentials')
+        ec2_credentials_failure = True
+        return False
+    return resp
 
 def _popen(cmd):
     return subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -108,7 +118,7 @@ async def exec(websocket):
                 elif message == 'ord wallet create':
                     create_ord_wallet()
                 elif message == 'ord wallet delete':
-                    delete_ord_wallet()
+                    disable_ord_wallet()
             except Exception as e:
                 print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
@@ -205,12 +215,11 @@ def create_ord_wallet():
         _put_dynamo_item('ord-wallet-error', str(e))
 
 
-def delete_ord_wallet():
-    # be careful
+def disable_ord_wallet():
     now = datetime.utcnow().isoformat()
-    newpath = f'/mnt/bitcoin-ord-data/bitcoin/ord/.old-ord-wallet-{now}'
-    _popen(f'mv /mnt/bitcoin-ord-data/bitcoin/ord/wallet.dat {newpath}')
-    _put_dynamo_item('ord-wallet-disabled', newpath)
+    newpath = f'/mnt/bitcoin-ord-data/bitcoin/.OLD_ord-wallet-{now}'
+    _popen(f'mv {ord_wallet_dir} {newpath}')
+    _put_dynamo_item('ord-wallet-disabled', f'wallet dir moved to {newpath}')
 
 
 def get_ord_wallet():
@@ -219,7 +228,7 @@ def get_ord_wallet():
     }
 
     # find the file, if exists
-    proc = _popen('ls -la /mnt/bitcoin-ord-data/bitcoin/ord/wallet.dat')
+    proc = _popen(f'ls -la {ord_wallet_dir}/wallet.dat')
     file_output = proc.stdout.readlines()
     if len(file_output):
         ord_wallet['file'] = file_output[0].decode('ascii')
@@ -248,11 +257,28 @@ def get_journalctl_alerts():
 
 
 def get_dynamo_items():
-    items = dynamodb.scan(TableName='OrdServerTable')
-    items = items['Items']
-    # we should probably change the dybamodb.scan to a .query and sort there
-    items.sort(key = lambda x:x['DateAdded']['S'], reverse=True)
-    return json.dumps({'control_log': items})
+    global ec2_credentials_failure
+    try:
+        items = dynamodb.scan(TableName='OrdServerTable')
+        items = items['Items']
+        # we should probably change the dybamodb.scan to a .query and sort there
+        items.sort(key = lambda x:x['DateAdded']['S'], reverse=True)
+        return json.dumps({'control_log': items})
+    except NoCredentialsError as e:
+        # TODO: why can't i find more info on this intermittent problem b/w boto3 and ec2?
+        print('boto3 could not get ec2 credentials')
+        ec2_credentials_failure = True
+        return json.dumps({'control_log': [{
+                'DateAdded': {
+                    'S' : '-'
+                },
+                'Name': {
+                    'S': 'dynamo failure'
+                },
+                'Details': {
+                    'S': 'boto3 could not load ec2 credentials to connect to dynamo'
+                }
+            }]})
     
 
 async def broadcast(message):
@@ -288,18 +314,6 @@ async def main():
         await broadcast_messages()  # runs forever
 
 
-def record_init():
-    global ec2_credentials_failure
-    now = datetime.utcnow().isoformat()
-    try:
-        _put_dynamo_item('Init')
-    except NoCredentialsError as e:
-        # TODO: why can't i find more info on this intermittent problem b/w boto3 and ec2?
-        print('boto3 could not get ec2 credentials')
-        ec2_credentials_failure = True
-
-
-record_init()
 t1 = Thread(target=get_ord_indexing_details)
 t1.start()
 

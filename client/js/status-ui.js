@@ -129,9 +129,9 @@ function setControlLog(data) {
             <tbody>`;
     data.forEach(row =>{
         html += `<tr>
-                    <td>${row.DateAdded.S}</td>
-                    <td>${row.Name.S}</td>
-                    <td>${row.Details.S}</td>
+                    <td><code class="black">${row.DateAdded.S}</code></td>
+                    <td><code class="black">${row.Name.S}</code></td>
+                    <td><code>${row.Details.S}</code></td>
                  </tr>`;
     })
     html += '</tbody></table>';

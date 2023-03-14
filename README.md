@@ -48,9 +48,11 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [ ] light database for managing queued Inscriptions
 - client
   - [x] release MVP
-  - [ ] clean up js / css
-  - [ ] include `bitcoin-cli` controls
+  - [x] clean up js / css
+  - [ ] add feedback / hold mechanism for e.g. create-wallet
   - [ ] finish Ord controls
+    - [x] create wallet
+    - [x] disable wallet
   - [ ] implement Inscription functionality
     - [ ] custom parameters (e..g fee_rate)
     - [ ] queue visbility
@@ -60,3 +62,4 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [ ] queue controls
       - [ ] cancel
       - [ ] prioritize / replace tx
+  - [ ] include `bitcoin-cli` controls?
