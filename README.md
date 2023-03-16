@@ -31,7 +31,18 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   
 
 ## TODO
+- [ ] Rename to `OrdControl` and have Dall-e generate something dope
+- [ ] Add mp4 to README
 - server
+  - [ ] wallet control
+    - [x] create wallet
+    - [x] delete wallet (note: see https://github.com/casey/ord/issues/1649)
+    - [ ] instead of saving seed phrase to Dynamo table, save to a flate file on server and allow retrieval / deletion from client
+    - [ ] generate receive addresses (save to Dynamo?)
+  - [ ] implement Inscription functionality
+    - [ ] resilient queueing
+    - [ ] smart queue consumer
+    - [ ] light database for managing queued Inscriptions
   - [x] alert UI if ec2/boto credentials error occurs, allow server restart
   - [ ] allow server restart regardless of the above
   - [x] show journalctl alerts / errors in UI 
@@ -40,12 +51,10 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [x] add authentication token via terraform
     - [x] actually *use* the auth token
   - [x] add "Name: OrdServer" tag to all aws resources
-  - [ ] add Dynamo table and make controller save Ord indexing status to it (via strace / `get_ord_indexing_details`)
+  - [x] add Dynamo table 
+    - [ ] get fine-grained ord-index status (via strace?)
   - [ ] split controller.py into a module, split out the ord-indexing watcher / logger
-  - [ ] implement Inscription functionality
-    - [ ] resilient queueing
-    - [ ] smart queue consumer
-    - [ ] light database for managing queued Inscriptions
+
 - client
   - [x] release MVP
   - [x] clean up js / css
