@@ -15,10 +15,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
    3. wait until you see "ord-server init.tpl finished" in the above before taking any actions
    4. view bitcoind status: `sudo systemctl status bitcoin-for-ord.service`
    5. you can run ord commands via `/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord {CMD e.g. "info"}`
-<!-- COMING SOON 6. run the visibility / control client:
-   1. `python3 -m http.server -d client 8888`
-   2. http://localhost:8888 -->
-7. EXPERIMENTAL: uncomment the websocket ingress in `main.tf` before step 5 and open the client's `index.html` in your browser (no need for an http server). E.g. file:///Users/kevin/Projects/OrdServer/client/index.html
+   6. run the visibility / control client by opening `index.html` in the browser (for me its at `file:///Users/kevin/Projects/OrdServer/client/index.html`)
 
 
 
