@@ -67,17 +67,18 @@ function printOrdInscriptions(content) {
 }
 
 function setOrdWalletInfo(data) {
-    console.log('wallet', data);
-
     let walletHtml;
+
+    walletHtml = `<p><strong>balance: &nbsp;</strong>${data['balance']}</p>`
+
     if (data.file && data.file.length) {
-        walletHtml = data['file'].split(' ').slice(5).join(' ')
-        walletHtml = `<strong>file: &nbsp;</strong>${walletHtml}`;
+        filepath = data['file'].split(' ').slice(5).join(' ')
+        walletHtml += `<p><strong>file: &nbsp;</strong>${filepath}`;
         walletHtml +=   `<a href="#" class="delete-wallet" class="icon-btn">
                             <span class="material-symbols-outlined">
                             delete
                             </span>
-                        </a>`;
+                        </a></p>`;
         
     } else {
         walletHtml = 'no wallet data'
@@ -106,6 +107,13 @@ function setEc2BotoCredsError() {
     $('#system-alerts').removeClass('waiting');
 }
 
+function setCloudinitStatus(data){
+    if (data.indexOf('init.tpl finished') > -1) {
+        $('#ord-control-status').addClass('finished');
+    }
+    $('#ord-control-content').html(data.replaceAll('\n\n', '<br>').replaceAll('\n','<br>'));
+}
+
 function setJournalCtlAlerts(data) {
     statusHtml = '<code>';
     statusHtml += data.replaceAll('\\n', '<br>');
@@ -116,7 +124,6 @@ function setJournalCtlAlerts(data) {
 }
 
 function setControlLog(data) {
-    console.log('data', data);
     let html = `
         <table class="table">
             <thead>

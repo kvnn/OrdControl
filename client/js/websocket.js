@@ -41,6 +41,10 @@ socket.onmessage = (msg)=>{
     if (data['control_log']) {
         setControlLog(data['control_log'])
     }
+
+    if (data['cloudinit_status']) {
+        setCloudinitStatus(data['cloudinit_status'])
+    }
 }
 
 socket.onopen = ()=>{
