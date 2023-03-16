@@ -5,6 +5,13 @@
     }
 }
 
+.blink {
+    animation: blinker 4s linear infinite;
+}
+
+.blink-slow {
+    animation: blinker 6s linear infinite;
+}
 
 /* e.g. #ord-wallet */
 .status-container {
@@ -52,3 +59,16 @@
         #ord-inscriptions {
             margin-top: 20px;
         }
+
+    /* ord-control status */
+    #ord-control-status .built {
+        display: none;
+    }
+
+    #ord-control-status.finished .building {
+        display: none;
+    }
+
+    #ord-control-status.finished .built {
+        display: block;
+    }

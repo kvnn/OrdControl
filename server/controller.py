@@ -14,6 +14,7 @@ dynamodb = boto3.client('dynamodb', region_name='us-west-2')
 
 # globals
 CLIENTS = set()
+ord_wallet_addresses = []
 ec2_credentials_failure = False
 
 ord_wallet_dir = '/mnt/bitcoin-ord-data/bitcoin/ord'
@@ -85,6 +86,7 @@ def _cmd(cmd):
             out += line.decode('ascii')
         except:
             out += str(line)
+        out += '\n'
 
     for line in error_raw:
         try:
@@ -94,6 +96,11 @@ def _cmd(cmd):
         out += '\n'
 
     return out, errors
+
+
+def _cmd_output_or_error(cmd):
+    output, error = _cmd(cmd)
+    return output if output else error
 
 
 async def echo(websocket):
@@ -184,6 +191,13 @@ def get_ord_index_service_status():
     })
 
 
+def get_cloudinit_status():
+    output, errors = _cmd('tail -n 10 /var/log/cloud-init-output.log')
+    return json.dumps({
+        'cloudinit_status': errors if errors else output
+    })
+
+
 def get_bitcoind_status():
     pid = 99999999
     pid_search = _popen("systemctl status bitcoin-for-ord.service | grep 'Main PID' | awk '{print $3}'").stdout.readlines()
@@ -223,27 +237,33 @@ def disable_ord_wallet():
 
 
 def get_ord_wallet():
+    global ord_wallet_addresses
+
     ord_wallet = {
         'file': ''
     }
 
     # find the file, if exists
-    proc = _popen(f'ls -la {ord_wallet_dir}/wallet.dat')
-    file_output = proc.stdout.readlines()
+    file_output, error = _cmd(f'ls -la {ord_wallet_dir}/wallet.dat')
     if len(file_output):
-        ord_wallet['file'] = file_output[0].decode('ascii')
-    
+        ord_wallet['file'] = file_output
 
     # wallet help
     if 'help' not in ord_wallet:
-        ord_wallet['help'] = _cmd(f'{ord_command} wallet help')
+        ord_wallet['help'] = _cmd_output_or_error(f'{ord_command} wallet help')
     
-    # inscriptions
-    if len(ord_wallet['file']) and 'inscriptions' not in ord_wallet:
-        output, error = _cmd(f'{ord_command} wallet inscriptions')
-        ord_wallet['inscriptions'] = output if output else error
-        if len(error):
-            ord_wallet['inscriptions_error'] = error
+    if len(ord_wallet['file']):
+        # balance
+        ord_wallet['balance'] = _cmd_output_or_error(f'{ord_command} wallet balance')
+
+        # address
+        if len(ord_wallet_addresses) == 0:
+            new_address = _cmd_output_or_error(f'{ord_command} wallet receive')
+            ord_wallet_addresses.append(new_address)
+        ord_wallet['addresses'] = ord_wallet_addresses
+
+        # inscriptions
+        ord_wallet['inscriptions'] = _cmd_output_or_error(f'{ord_command} wallet inscriptions')
 
     return json.dumps({"ord_wallet": ord_wallet})
 
@@ -292,13 +312,14 @@ async def broadcast(message):
 async def broadcast_messages():
     global ord_index_output
     while True:
+        await broadcast(get_cloudinit_status())
         await broadcast(get_bitcoind_status())
         await broadcast(get_ord_index_service_status())
         await broadcast(get_ord_wallet())
         await broadcast(get_ord_indexing_output())
         await broadcast(get_journalctl_alerts())
         await broadcast(get_dynamo_items())
-        print(f'ord_index_output is {ord_index_output}')
+        # print(f'ord_index_output is {ord_index_output}')
 
         if ec2_credentials_failure:
             await broadcast(json.dumps({
@@ -314,7 +335,8 @@ async def main():
         await broadcast_messages()  # runs forever
 
 
-t1 = Thread(target=get_ord_indexing_details)
-t1.start()
+# the ord-indexing-details output just isn't very helpful lately
+# t1 = Thread(target=get_ord_indexing_details)
+# t1.start()
 
 asyncio.run(main())

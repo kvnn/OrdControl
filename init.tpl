@@ -75,4 +75,4 @@ sudo -H -u ubuntu /home/ubuntu/.cargo/bin/cargo build --release
 /usr/bin/systemctl enable ord.timer
 /usr/bin/systemctl start ord.timer
 
-echo "ord-server init.tpl finished"
+echo "ord-control init.tpl finished"

@@ -41,7 +41,7 @@ code {
 
     #status-websocket.reconnecting .reconnecting {
         display: inline;
-        animation: blinker 1s linear infinite;
+        animation: blinker 3s linear infinite;
     }
 
     #status-websocket.reconnecting .open {
