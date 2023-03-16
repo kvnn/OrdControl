@@ -55,9 +55,11 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   - [x] release MVP
   - [x] clean up js / css
   - [ ] add feedback / hold mechanism for e.g. create-wallet
-  - [ ] finish Ord controls
+  - [ ] wallet UI
     - [x] create wallet
-    - [x] disable wallet
+    - [x] disable wallet (note: see https://github.com/casey/ord/issues/1649)
+    - [ ] manage seed phrase
+    - [ ] clean up initial state (when wallet doesn't exist)
   - [ ] implement Inscription functionality
     - [ ] custom parameters (e..g fee_rate)
     - [ ] queue visbility
