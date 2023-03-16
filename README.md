@@ -9,13 +9,12 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 3. `cd OrdServer`
 4. `terraform init`
 5. `terraform apply`
-6. visit your server:
+6. open the visibility / control client by opening `index.html` in the browser (for me its at `file:///Users/kevin/Projects/OrdServer/client/index.html`)
+7. visit your server [OPTIONAL]:
    1. copy / paste the `ssh_connection_string` (printed once #5 is complete) to connect to your instance
    2. in instance, run `tail -f /var/log/cloud-init-output.log` to see status of the post-deploy script
-   3. wait until you see "ord-server init.tpl finished" in the above before taking any actions
-   4. view bitcoind status: `sudo systemctl status bitcoin-for-ord.service`
-   5. you can run ord commands via `/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord {CMD e.g. "info"}`
-   6. run the visibility / control client by opening `index.html` in the browser (for me its at `file:///Users/kevin/Projects/OrdServer/client/index.html`)
+   3. wait until you see "ord-server init.tpl finished" in the above before taking any actions (the client will update you as well)
+   4. you can manually run ord commands via `/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord {CMD e.g. "info"}`
 
 
 
