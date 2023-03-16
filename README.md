@@ -1,6 +1,6 @@
 
 # OrdServer
-This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (which currently can restart the websocket server, restart bitcoind and start ord index).
+This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (the long-term goal of which is to provide a UI for managing inscriptions).
 
 
 ## Quickstart
