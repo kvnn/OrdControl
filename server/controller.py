@@ -312,6 +312,7 @@ async def broadcast(message):
 async def broadcast_messages():
     global ord_index_output
     while True:
+        print('broadcasting')
         await broadcast(get_cloudinit_status())
         await broadcast(get_bitcoind_status())
         await broadcast(get_ord_index_service_status())

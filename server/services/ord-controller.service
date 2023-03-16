@@ -5,7 +5,6 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-Environment=AWS_METADATA_SERVICE_NUM_ATTEMPTS=6 AWS_METADATA_SERVICE_TIMEOUT=2
 ExecStart=/usr/bin/python3 /home/ubuntu/OrdServer/controller.py
 Type=idle
 Restart=on-failure
