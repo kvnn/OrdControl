@@ -90,10 +90,10 @@ def _cmd(cmd):
 
     for line in error_raw:
         try:
-            out += line.decode('ascii')
+            errors += line.decode('ascii')
         except:
-            out += str(line)
-        out += '\n'
+            errors += str(line)
+        errors += '\n'
 
     return out, errors
 
@@ -245,6 +245,7 @@ def get_ord_wallet():
 
     # find the file, if exists
     file_output, error = _cmd(f'ls -la {ord_wallet_dir}/wallet.dat')
+
     if len(file_output):
         ord_wallet['file'] = file_output
 
@@ -258,6 +259,9 @@ def get_ord_wallet():
 
         # address
         if len(ord_wallet_addresses) == 0:
+            # if address-file doesn't exist, create address and write it to address-file
+            # read from address-file
+            # if ord_wallet_addresses == 0, create address
             new_address = _cmd_output_or_error(f'{ord_command} wallet receive')
             ord_wallet_addresses.append(new_address)
         ord_wallet['addresses'] = ord_wallet_addresses
