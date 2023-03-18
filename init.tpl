@@ -5,16 +5,16 @@ echo "ord-server init.tpl starting"
 # to view this script in instance: `sudo cat /var/lib/cloud/instances/{instance_id}/user-data.txt`
 
 
-# install OrdServer linux dependencies
+# install OrdControl linux dependencies
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install python3-pip
 
-# wait for OrdServer file transfer to complete ... otherwise, on slow connections, we may get a "directory doesn't exist" error
-while [ ! -d /home/ubuntu/OrdServer ]; do echo "waiting for /home/ubuntu/OrdServer to exist..." && sleep 1; done
+# wait for OrdControl file transfer to complete ... otherwise, on slow connections, we may get a "directory doesn't exist" error
+while [ ! -d /home/ubuntu/OrdControl ]; do echo "waiting for /home/ubuntu/OrdControl to exist..." && sleep 1; done
 
-# install OrdServer python dependencies
-cd /home/ubuntu/OrdServer
-chown -R ubuntu.ubuntu /home/ubuntu/OrdServer
+# install OrdControl python dependencies
+cd /home/ubuntu/OrdControl
+chown -R ubuntu.ubuntu /home/ubuntu/OrdControl
 sudo -H -u ubuntu pip3 install -r requirements.txt
 
 
@@ -35,8 +35,8 @@ chmod 755 /etc/bitcoin
 cp /usr/local/bin/bitcoin/bitcoin.conf /etc/bitcoin/bitcoin.conf
 chown -R ubuntu.ubuntu /etc/bitcoin
 
-# set up OrdServer services
-cd /home/ubuntu/OrdServer
+# set up OrdControl services
+cd /home/ubuntu/OrdControl
 chown -R root.root services
 # chmod 755 -R services
 mv services/* /etc/systemd/system

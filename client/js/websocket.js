@@ -1,4 +1,4 @@
-const url = `ws://${window.OrdServer.wsurl}:8765`;
+const url = `ws://${window.OrdControl.wsurl}:8765`;
 
 socket = new ReconnectingWebSocket(url);
 
@@ -52,7 +52,7 @@ socket.onmessage = (msg)=>{
 }
 
 socket.onopen = ()=>{
-    socket.send(`token:${window.OrdServer.password}`);
+    socket.send(`token:${window.OrdControl.password}`);
     $('#status-websocket').removeClass('reconnecting').addClass('open')
 }
 

@@ -1,7 +1,7 @@
 variable "resource_tag_name" {
   description = "Value of the Name tag for AWS resources"
   type        = string
-  default     = "OrdServer"
+  default     = "OrdControl"
 }
 
 

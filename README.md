@@ -1,15 +1,15 @@
 
-# OrdServer
+# OrdControl
 This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (the long-term goal of which is to provide a UI for managing inscriptions).
 
 
 ## Quickstart
 1. Have an AWS account set up with the cli : https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
-2. `git clone git@github.com:kvnn/OrdServer.git`
-3. `cd OrdServer`
+2. `git clone git@github.com:kvnn/OrdControl.git`
+3. `cd OrdControl`
 4. `terraform init`
 5. `terraform apply`
-6. open the visibility / control client by opening `index.html` in the browser (for me its at `file:///Users/kevin/Projects/OrdServer/client/index.html`)
+6. open the visibility / control client by opening `index.html` in the browser (for me its at `file:///Users/kevin/Projects/OrdControl/client/index.html`)
 7. visit your server [OPTIONAL]:
    1. copy / paste the `ssh_connection_string` (printed once #5 is complete) to connect to your instance
    2. in instance, run `tail -f /var/log/cloud-init-output.log` to see status of the post-deploy script
@@ -27,8 +27,8 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   
 
 ## TODO
-- [ ] Rename to `OrdControl` and have Dall-e generate something dope
-- [ ] Add mp4 to README
+- [x] Rename to `OrdControl` and have Dall-e generate something dope
+- [ ] Add UI screenshot or **loop** to README
 - server
   - [ ] wallet control
     - [x] create wallet
@@ -46,7 +46,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   - [x] include controller websocket server
     - [x] add authentication token via terraform
     - [x] actually *use* the auth token
-  - [x] add "Name: OrdServer" tag to all aws resources
+  - [x] add "Name: OrdControl" tag to all aws resources
   - [x] add Dynamo table 
     - [ ] get fine-grained ord-index status (via strace?)
   - [ ] split controller.py into a module, split out the ord-indexing watcher / logger

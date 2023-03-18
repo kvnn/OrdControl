@@ -1,11 +1,11 @@
 [Unit]
-Description=OrdServer Controller
-Documentation=https://github.com/kvnn/OrdServer/blob/master/README.md
+Description=OrdControl Controller
+Documentation=https://github.com/kvnn/OrdControl/blob/master/README.md
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/ubuntu/OrdServer/controller.py
+ExecStart=/usr/bin/python3 /home/ubuntu/OrdControl/controller.py
 Type=idle
 Restart=on-failure
 User=ubuntu

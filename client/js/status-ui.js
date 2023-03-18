@@ -77,7 +77,6 @@ function setOrdWalletInfo(data) {
                         <p>
                             <strong>file: &nbsp;</strong>${filepath}
                         </p>`;
-        
     } else {
         $('#ord-wallet').removeClass('exists');
 
