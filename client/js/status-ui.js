@@ -54,6 +54,12 @@ function setOrdIndexServiceStatus(data) {
     statusHtml = statusHtml.replaceAll('\\n', '<br>');
     statusHtml += '</code>';
 
+    if (data.indexOf('Deactivated successfully') > -1) {
+        $('#ord-indexing-service-status').addClass('finished');
+    } else {
+        $('#ord-indexing-service-status').removeClass('finished');
+    }
+
     $('#ord-indexing-service-status-content').html(statusHtml);
     $('#ord-indexing-service-status').removeClass('waiting');
 }
