@@ -17,6 +17,8 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
    4. you can manually run ord commands via `/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord {CMD e.g. "info"}`
 
 
+![OrdControl server-built](https://github.com/kvnn/OrdControl/blob/master/docs/init-demo.gif)
+
 
 ## Details
 - it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to March 12 2023
