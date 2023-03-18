@@ -46,25 +46,61 @@
 
     <div class="main container-fluid">
       <div class="row">
-
-        <div class="col-sm-12 col-md-6 status-container" id="ord-control-status">
-          <h4>ord controller</h4>
-          <div class="details">
-            <div class="card">
-              <code class="card-body">
-                <div class="blink building alert alert-warning" role="alert">
-                  server is building...
-                </div>
-                <div class="built alert alert-info" role="alert">
-                  server  built
-                </div>
-                <div id="ord-control-content"></div>
-              </code >
+        <!-- LEFT -->
+        <div class="col-sm-12 col-md-6">
+          <div class="col-sm-12 status-container" id="ord-control-status">
+            <h4>ord controller</h4>
+            <div class="details">
+              <div class="card">
+                <code class="card-body">
+                  <div class="blink building alert alert-warning" role="alert">
+                    server is building...
+                  </div>
+                  <div class="built alert alert-info" role="alert">
+                    server  built
+                  </div>
+                  <div id="ord-control-content"></div>
+                </code >
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-sm-12 col-md-6 status-container waiting" id="bitcoind-status">
+          <div class="col-sm-12 status-container waiting" id="ord-wallet">
+            <h4>ord wallet</h4>
+            <div class="details">
+              <div class="card">
+                <a href="#" id="ord-wallet-new" class="pull-left waiting-hide icon-btn">
+                  <span class="material-symbols-outlined">
+                    add_box
+                  </span>
+                  <span>create wallet</span>
+                </a>
+                <div class="card-body">
+                  <code class="black" id="ord-wallet-file">waiting...</code>
+                  <div class="black" id="ord-inscriptions">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-12 status-container waiting" id="system-alerts">
+            <h4>
+              system-wide alerts
+            </h4>
+            <div class="boto3" id="boto3-alerts-content">
+              <!-- no .card here b/c we don't want to show this unless a rare error is returned -->
+            </div>
+            <div class="journalctl">
+              <div class="card">
+                <div class="card-body" id="journalctl-content">waiting...</div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- end left -->
+        <!-- RIGHT -->
+      <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 status-container waiting" id="bitcoind-status">
           <h4>bitcoind</h4>
           <div class="details">
             <div class="card">
@@ -73,26 +109,16 @@
           </div>
         </div>
 
-        <div class="col-sm-12 col-md-6 status-container waiting" id="ord-wallet">
-          <h4>ord wallet</h4>
+        <div class="col-sm-12 status-container waiting" id="control-log">
+          <h4>event log</h4>
           <div class="details">
             <div class="card">
-              <a href="#" id="ord-wallet-new" class="pull-left waiting-hide icon-btn">
-                <span class="material-symbols-outlined">
-                  add_box
-                </span>
-                <span>create wallet</span>
-              </a>
-              <div class="card-body">
-                <code class="black" id="ord-wallet-file">waiting...</code>
-                <div class="black" id="ord-inscriptions">
-                </div>
-              </div>
+              <div class="card-body" id="control-log-content">waiting...</div>
             </div>
           </div>
         </div>
 
-        <div class="col-sm-12 col-md-6 status-container waiting" id="ord-indexing-service-status">
+        <div class="col-sm-12 status-container waiting" id="ord-indexing-service-status">
           <h4>ord indexing service status</h4>
           <div class="details">
             <div class="card">
@@ -101,29 +127,9 @@
           </div>
         </div>
 
-        <div class="col-sm-12 col-md-6 status-container waiting" id="system-alerts">
-          <h4>
-            system-wide alerts
-          </h4>
-          <div class="boto3" id="boto3-alerts-content">
-            <!-- no .card here b/c we don't want to show this unless a rare error is returned -->
-          </div>
-          <div class="journalctl">
-            <div class="card">
-              <div class="card-body" id="journalctl-content">waiting...</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-12 col-md-6 status-container waiting" id="control-log">
-          <h4>event log</h4>
-          <div class="details">
-            <div class="card">
-              <div class="card-body" id="control-log-content">waiting...</div>
-            </div>
-          </div>
-        </div>
       </div>
+
+      </div> <!-- end RIGHT -->
     </div>
   </body>
 

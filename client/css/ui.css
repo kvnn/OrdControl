@@ -72,3 +72,7 @@
     #ord-control-status.finished .built {
         display: block;
     }
+
+    #ord-control-status.finished .card-body {
+        max-height: 82px;
+    }
