@@ -17,6 +17,7 @@ CLIENTS = set()
 ord_wallet_addresses = []
 ec2_credentials_failure = False
 
+dynamo_table_name = 'OrdControlTable'
 ord_wallet_dir = '/mnt/bitcoin-ord-data/bitcoin/ord'
 ord_command = '/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord'
 
@@ -26,7 +27,7 @@ seed_phrase_filepath = os.path.join(ourpath, 'seed-phrase.txt')
 token_filepath = os.path.join(ourpath, 'client-env.js.txt')
 token_file = open(token_filepath, 'r')
 token = token_file.read()
-token = token.split('window.OrdServer.password="')[1].split('";')[0]
+token = token.split('window.OrdControl.password="')[1].split('";')[0]
 
 
 def _build_dynamo_item(name, details):
@@ -53,7 +54,7 @@ def _put_dynamo_item(name, details=''):
 
     print(f'_put_dynamo_item {name} {details}')
     try:
-        resp = dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(name, details))
+        resp = dynamodb.put_item(TableName=dynamo_table_name, Item=_build_dynamo_item(name, details))
     except NoCredentialsError as e:
         # TODO: why can't i find more info on this intermittent problem b/w boto3 and ec2?
         print('boto3 could not get ec2 credentials')
@@ -181,7 +182,7 @@ def get_ord_indexing_details():
                     }
                 }
                 if not ec2_credentials_failure:
-                    dynamodb.put_item(TableName='OrdServerTable', Item=item)
+                    dynamodb.put_item(TableName=dynamo_table_name, Item=item)
 
 def get_ord_indexing_output():
     global ord_index_output
@@ -220,12 +221,8 @@ def create_ord_wallet():
         output, error = _cmd(f'{ord_command} wallet create')
 
         if len(error):
-            if len(output):
-                error += f'\n\n stdout was {output}'
             _put_dynamo_item('ord-wallet-created-error', error)
         else:
-            _put_dynamo_item('ord-wallet-created', output)
-
             seed_phrase = json.loads(output).get('mnemonic')
 
             with open(seed_phrase_filepath, 'w', encoding="utf-8") as f:
@@ -299,7 +296,7 @@ def get_journalctl_alerts():
 def get_dynamo_items():
     global ec2_credentials_failure
     try:
-        items = dynamodb.scan(TableName='OrdServerTable')
+        items = dynamodb.scan(TableName=dynamo_table_name)
         items = items['Items']
         # we should probably change the dybamodb.scan to a .query and sort there
         items.sort(key = lambda x:x['DateAdded']['S'], reverse=True)
