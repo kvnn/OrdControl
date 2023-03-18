@@ -45,6 +45,10 @@ socket.onmessage = (msg)=>{
     if (data['cloudinit_status']) {
         setCloudinitStatus(data['cloudinit_status'])
     }
+
+    if (data['seed_phrase']) {
+        showSeedPhrase(data['seed_phrase'])
+    }
 }
 
 socket.onopen = ()=>{

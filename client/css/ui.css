@@ -13,7 +13,37 @@
     animation: blinker 6s linear infinite;
 }
 
-/* e.g. #ord-wallet */
+#ord-wallet {
+    position: relative;
+}
+
+    #ord-wallet .create {
+        margin: 10px 0 0 10px;
+    }
+
+    #ord-wallet .show-seed {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    #ord-wallet .disable {
+        display: none;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    #ord-wallet.exists .create {
+        display: none;
+    }
+
+    #ord-wallet.exists .show-seed,
+    #ord-wallet.exists .disable {
+        display: inline;
+    }
+
 .status-container {
 
 }

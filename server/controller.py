@@ -22,8 +22,9 @@ ord_command = '/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitco
 
 # get our terraform-generated password (see main.tf)
 ourpath = os.path.dirname(os.path.realpath(__file__))
-filepath = os.path.join(ourpath, 'client-env.js.txt')
-token_file = open(filepath, 'r')
+seed_phrase_filepath = os.path.join(ourpath, 'seed-phrase.txt')
+token_filepath = os.path.join(ourpath, 'client-env.js.txt')
+token_file = open(token_filepath, 'r')
 token = token_file.read()
 token = token.split('window.OrdServer.password="')[1].split('";')[0]
 
@@ -49,6 +50,8 @@ def _build_dynamo_item(name, details):
 
 def _put_dynamo_item(name, details=''):
     global ec2_credentials_failure
+
+    print(f'_put_dynamo_item {name} {details}')
     try:
         resp = dynamodb.put_item(TableName='OrdServerTable', Item=_build_dynamo_item(name, details))
     except NoCredentialsError as e:
@@ -126,6 +129,8 @@ async def exec(websocket):
                     create_ord_wallet()
                 elif message == 'ord wallet delete':
                     disable_ord_wallet()
+                elif message == 'ord wallet seed phrase':
+                    await return_seed_phrase()
             except Exception as e:
                 print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
@@ -212,21 +217,32 @@ def get_bitcoind_status():
 
 def create_ord_wallet():
     try:
-        proc = _popen(f'{ord_command} wallet create')
-        output = [item.decode('ascii') for item in proc.stdout.readlines() if item not in ('{\n', '}\n')]
-        output = ''.join(output)
+        output, error = _cmd(f'{ord_command} wallet create')
 
-        err = [item.decode('ascii') for item in proc.stderr.readlines() if item not in ('{\n', '}\n')]
-        err = ''.join(err)
-
-        if len(err):
+        if len(error):
             if len(output):
-                err += f'\n\n stdout was {output}'
-            _put_dynamo_item('ord-wallet-error', err)
+                error += f'\n\n stdout was {output}'
+            _put_dynamo_item('ord-wallet-created-error', error)
         else:
             _put_dynamo_item('ord-wallet-created', output)
+
+            seed_phrase = json.loads(output).get('mnemonic')
+
+            with open(seed_phrase_filepath, 'w', encoding="utf-8") as f:
+                f.write(seed_phrase)
+
     except Exception as e:
-        _put_dynamo_item('ord-wallet-error', str(e))
+        _put_dynamo_item('ord-wallet-created-error', str(e))
+
+
+async def return_seed_phrase():
+    try:
+        with open(seed_phrase_filepath, encoding="utf-8") as f:
+            seed_phrase = f.read()
+    except Exception as e:
+        seed_phrase = f'error: {e}'
+        _put_dynamo_item('return-seed-phrase-error', seed_phrase)
+    await broadcast(json.dumps({'seed_phrase': seed_phrase}))
 
 
 def disable_ord_wallet():

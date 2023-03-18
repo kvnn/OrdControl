@@ -69,20 +69,23 @@ function printOrdInscriptions(content) {
 function setOrdWalletInfo(data) {
     let walletHtml;
 
-    walletHtml = `<p><strong>balance: &nbsp;</strong>${data['balance']}</p>`
-
     if (data.file && data.file.length) {
+        $('#ord-wallet').addClass('exists');
+
         filepath = data['file'].split(' ').slice(5).join(' ')
-        walletHtml += `<p><strong>file: &nbsp;</strong>${filepath}`;
-        walletHtml +=   `<a href="#" class="delete-wallet" class="icon-btn">
-                            <span class="material-symbols-outlined">
-                            delete
-                            </span>
-                        </a></p>`;
+        walletHtml =   `
+                        <p>
+                            <strong>file: &nbsp;</strong>${filepath}
+                        </p>`;
         
     } else {
-        walletHtml = 'no wallet data'
+        $('#ord-wallet').removeClass('exists');
+
+        walletHtml = '<p>no wallet data</p>'
     }
+
+    walletHtml += `<p><strong>balance: &nbsp;</strong>${data['balance']}</p>`
+
     $('#ord-wallet-file').html(walletHtml);
     $('#ord-wallet').removeClass('waiting');
 
@@ -146,6 +149,10 @@ function setControlLog(data) {
     $('#control-log').removeClass('waiting');
 }
 
+function showSeedPhrase(phrase) {
+    alert(phrase)
+}
+
 $(function(){
     $('#status-websocket').on('click', '.restart', evt=>{
         evt.preventDefault();
@@ -173,13 +180,18 @@ $(function(){
         window.socket.send('restart restart');
     });
 
-    $('#ord-wallet-new').click(evt => {
+    $('#ord-wallet').on('click', '.create', evt => {
         evt.preventDefault();
         window.socket.send('ord wallet create');
     });
 
-    $('#ord-wallet').on('click', '.delete-wallet', evt => {
+    $('#ord-wallet').on('click', '.disable', evt => {
         evt.preventDefault();
         window.socket.send('ord wallet delete');
+    });
+
+    $('#ord-wallet').on('click', '.show-seed', evt => {
+        evt.preventDefault();
+        window.socket.send('ord wallet seed phrase');
     });
 })

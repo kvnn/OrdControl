@@ -1,0 +1,10 @@
+[Unit]
+Description=Make the Ord indexer run every 10 mins
+Requires=ord.service
+
+[Timer]
+Unit=ord.service
+OnCalendar=*:0/10
+
+[Install]
+WantedBy=timers.target
