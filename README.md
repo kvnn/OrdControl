@@ -3,6 +3,9 @@
 This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (the long-term goal of which is to provide a UI for managing inscriptions).
 
 
+![OrdControl server-built](https://github.com/kvnn/OrdControl/blob/master/docs/init-demo.gif?raw=true)
+
+
 ## Quickstart
 1. Have an AWS account set up with the cli : https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
 2. `git clone git@github.com:kvnn/OrdControl.git`
@@ -15,9 +18,6 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
    2. in instance, run `tail -f /var/log/cloud-init-output.log` to see status of the post-deploy script
    3. wait until you see "ord-server init.tpl finished" in the above before taking any actions (the client will update you as well)
    4. you can manually run ord commands via `/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord {CMD e.g. "info"}`
-
-
-![OrdControl server-built](https://github.com/kvnn/OrdControl/blob/master/docs/init-demo.gif)
 
 
 ## Details
