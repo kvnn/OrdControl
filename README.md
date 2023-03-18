@@ -21,6 +21,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 
 ## Details
+- its taking me 5-10 minutes from `terraform apply` until Ord is successfully indexing. [A docker container might help.](https://github.com/kvnn/OrdControl/issues/4)
 - it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to March 12 2023
 - as of March 6 2023, this setup is costing me about $13 / day, which is almost entirely EC2 costs. I'll sometimes run `terraform --auto-approve destroy` when I know I won't be using it
 - you can change regions, availability zones and instance types in `variables.tf`. Note that the data drive mount may fail for instances that use `nvme` type drives, and it may fail for other regions. If you have a use-case you need help with, feel free to create an Issue.

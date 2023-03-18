@@ -1,3 +1,0 @@
-window.OrdControl = window.OrdControl || {};
-window.OrdControl.password="RQgW3q7axiggNVIN";
-window.OrdControl.wsurl="ec2-18-246-64-43.us-west-2.compute.amazonaws.com";
