@@ -19,7 +19,8 @@ ec2_credentials_failure = False
 
 dynamo_table_name = 'OrdControlTable'
 ord_wallet_dir = '/mnt/bitcoin-ord-data/bitcoin/ord'
-ord_command = '/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord'
+bitcoincli_cmd = '/usr/local/bin/bitcoin/bin/bitcoin-cli  -conf=/etc/bitcoin/bitcoin.conf -datadir=/mnt/bitcoin-ord-data/bitcoin'
+ord_cmd = '/home/ubuntu/ord/target/release/ord --bitcoin-data-dir=/mnt/bitcoin-ord-data/bitcoin --data-dir=/mnt/bitcoin-ord-data/ord'
 
 # get our terraform-generated password (see main.tf)
 ourpath = os.path.dirname(os.path.realpath(__file__))
@@ -132,6 +133,8 @@ async def exec(websocket):
                     disable_ord_wallet()
                 elif message == 'ord wallet seed phrase':
                     await return_seed_phrase()
+                elif message == 'ord wallet new address':
+                    create_ord_address()
             except Exception as e:
                 print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
@@ -218,7 +221,7 @@ def get_bitcoind_status():
 
 def create_ord_wallet():
     try:
-        output, error = _cmd(f'{ord_command} wallet create')
+        output, error = _cmd(f'{ord_cmd} wallet create')
 
         if len(error):
             _put_dynamo_item('ord-wallet-created-error', error)
@@ -230,6 +233,11 @@ def create_ord_wallet():
 
     except Exception as e:
         _put_dynamo_item('ord-wallet-created-error', str(e))
+
+
+def create_ord_address():
+    # TODO: we prob want some sort of feedback here
+    _cmd(f'{ord_cmd} wallet receive')
 
 
 async def return_seed_phrase():
@@ -264,23 +272,12 @@ def get_ord_wallet():
 
     # wallet help
     if 'help' not in ord_wallet:
-        ord_wallet['help'] = _cmd_output_or_error(f'{ord_command} wallet help')
+        ord_wallet['help'] = _cmd_output_or_error(f'{ord_cmd} wallet help')
     
     if len(ord_wallet['file']):
-        # balance
-        ord_wallet['balance'] = _cmd_output_or_error(f'{ord_command} wallet balance')
-
-        # address
-        if len(ord_wallet_addresses) == 0:
-            # if address-file doesn't exist, create address and write it to address-file
-            # read from address-file
-            # if ord_wallet_addresses == 0, create address
-            new_address = _cmd_output_or_error(f'{ord_command} wallet receive')
-            ord_wallet_addresses.append(new_address)
-        ord_wallet['addresses'] = ord_wallet_addresses
-
-        # inscriptions
-        ord_wallet['inscriptions'] = _cmd_output_or_error(f'{ord_command} wallet inscriptions')
+        ord_wallet['balance'] = _cmd_output_or_error(f'{ord_cmd} wallet balance')
+        ord_wallet['addresses'] = _cmd_output_or_error(f'{bitcoincli_cmd} listreceivedbyaddress 0 true')
+        ord_wallet['inscriptions'] = _cmd_output_or_error(f'{ord_cmd} wallet inscriptions')
 
     return json.dumps({"ord_wallet": ord_wallet})
 

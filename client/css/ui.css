@@ -91,18 +91,23 @@
         }
 
     /* ord-control status */
-    #ord-control-status .built {
+    .status-container .built {
         display: none;
     }
 
-    #ord-control-status.finished .building {
+    .status-container.finished .building {
         display: none;
     }
 
-    #ord-control-status.finished .built {
+    .status-container.finished .built {
         display: block;
     }
 
-    #ord-control-status.finished .card-body {
+    #ord-control-status.finished .card-body,
+    .finished #ord-indexing-service-status-content {
         max-height: 82px;
+    }
+
+    #ord-addresses .icon-btn span:nth-child(2) {
+        font-size: 1.4em;
     }

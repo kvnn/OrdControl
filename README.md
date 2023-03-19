@@ -31,13 +31,16 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 ## TODO
 - [x] Rename to `OrdControl` and have Dall-e generate something dope
-- [ ] Add UI screenshot or **loop** to README
+- [x] Add UI screenshot or **loop** to README
 - server
   - [ ] wallet control
     - [x] create wallet
     - [x] delete wallet (note: see https://github.com/casey/ord/issues/1649)
-    - [ ] instead of saving seed phrase to Dynamo table, save to a flate file on server and allow retrieval / deletion from client
-    - [ ] generate receive addresses (save to Dynamo?)
+    - [x] instead of saving seed phrase to Dynamo table, save to a flate file on server and allow retrieval
+    - [ ] allow seed-phrase delete
+    - [x] generate receive addresses
+    - [ ] send funds
+    - [ ] view txs
   - [ ] implement Inscription functionality
     - [ ] resilient queueing
     - [ ] smart queue consumer
@@ -45,24 +48,27 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
   - [x] alert UI if ec2/boto credentials error occurs, allow server restart
   - [ ] allow server restart regardless of the above
   - [x] show journalctl alerts / errors in UI 
-  - [ ] verify that `bitcoin-cli` work, play with it
+  - [x] verify that `bitcoin-cli` work, play with it
   - [x] include controller websocket server
     - [x] add authentication token via terraform
     - [x] actually *use* the auth token
   - [x] add "Name: OrdControl" tag to all aws resources
   - [x] add Dynamo table 
-    - [ ] get fine-grained ord-index status (via strace?)
+    - [x] get fine-grained ord-index status (via strace?)
   - [ ] split controller.py into a module, split out the ord-indexing watcher / logger
 
 - client
   - [x] release MVP
   - [x] clean up js / css
-  - [ ] add feedback / hold mechanism for e.g. create-wallet
+  - [ ] show ssh connection string
+  - [ ] add feedback / hold mechanism for e.g. create-wallet, create-address
   - [ ] wallet UI
     - [x] create wallet
     - [x] disable wallet (note: see https://github.com/casey/ord/issues/1649)
-    - [ ] manage seed phrase
-    - [ ] clean up initial state (when wallet doesn't exist)
+    - [x] show seed phrase
+    - [x] clean up initial state (when wallet doesn't exist)
+    - [x] add address
+    - [x] view addresses
   - [ ] implement Inscription functionality
     - [ ] custom parameters (e..g fee_rate)
     - [ ] queue visbility

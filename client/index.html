@@ -65,31 +65,11 @@
             </div>
           </div>
 
-          <div class="col-sm-12 status-container waiting" id="ord-wallet">
-            <h4>ord wallet</h4>
+          <div class="col-sm-12 status-container waiting" id="bitcoind-status">
+            <h4>bitcoind</h4>
             <div class="details">
               <div class="card">
-                <a href="#" class="pull-left create waiting-hide icon-btn">
-                  <span class="material-symbols-outlined">
-                    add_box
-                  </span>
-                  <span>create wallet</span>
-                </a>
-                <a title="show seed phrase" href="#" class="show-seed" class="">
-                  <span class="material-symbols-outlined">
-                  view_timeline
-                  </span>
-                </a>
-                <a title="disable wallet" href="#" class="disable" class="icon-btn">
-                    <span class="material-symbols-outlined">
-                    delete
-                    </span>
-                </a>
-                <div class="card-body">
-                  <code class="black" id="ord-wallet-file">waiting...</code>
-                  <div class="black" id="ord-inscriptions">
-                  </div>
-                </div>
+                <div class="card-body" id="bitcoind-status-content">waiting...</div>
               </div>
             </div>
           </div>
@@ -110,11 +90,47 @@
         </div> <!-- end left -->
         <!-- RIGHT -->
       <div class="col-sm-12 col-md-6">
-        <div class="col-sm-12 status-container waiting" id="bitcoind-status">
-          <h4>bitcoind</h4>
+        <div class="col-sm-12 status-container waiting" id="ord-wallet">
+          <h4>ord wallet</h4>
           <div class="details">
             <div class="card">
-              <div class="card-body" id="bitcoind-status-content">waiting...</div>
+              <a href="#" class="pull-left create waiting-hide icon-btn">
+                <span class="material-symbols-outlined">
+                  add_box
+                </span>
+                <span>create wallet</span>
+              </a>
+              <a title="show seed phrase" href="#" class="show-seed" class="">
+                <span class="material-symbols-outlined">
+                view_timeline
+                </span>
+              </a>
+              <a title="disable wallet" href="#" class="disable" class="icon-btn">
+                  <span class="material-symbols-outlined">
+                  delete
+                  </span>
+              </a>
+              <div class="card-body">
+                <code class="black" id="ord-wallet-file">waiting...</code>
+                <code class="black" id="ord-addresses"></code>
+                <div class="black" id="ord-inscriptions">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-sm-12 status-container waiting" id="ord-indexing-service-status">
+          <h4>ord index</h4>
+          <div class="details">
+            <div class="card">
+              <div class="card-body">
+                <div class="built alert alert-info" role="alert">
+                  fully indexed
+                </div>
+                <div id="ord-indexing-service-status-content">
+                waiting...
+              </div>
             </div>
           </div>
         </div>
@@ -124,15 +140,6 @@
           <div class="details">
             <div class="card">
               <div class="card-body" id="control-log-content">waiting...</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-12 status-container waiting" id="ord-indexing-service-status">
-          <h4>ord indexing service status</h4>
-          <div class="details">
-            <div class="card">
-              <div class="card-body" id="ord-indexing-service-status-content">waiting...</div>
             </div>
           </div>
         </div>

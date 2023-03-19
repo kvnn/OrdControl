@@ -72,6 +72,24 @@ function printOrdInscriptions(content) {
     $('#ord-inscriptions').html(content);
 }
 
+function printAddresses(data) {
+    data = JSON.parse(data);
+    console.log('data', data);
+    let html = `<strong>addresses:</strong>
+                <ul>`
+    data.forEach(addressObj => {
+        html += `<li>${addressObj.address}</li>`;
+    });
+    html += `<a href="#" class="new-address pull-left icon-btn">
+                <span class="material-symbols-outlined">
+                add_box
+                </span>
+                <span>new</span>
+            </a>`;
+    html += '</ul>';
+    $('#ord-addresses').html(html);
+}
+
 function setOrdWalletInfo(data) {
     let walletHtml;
 
@@ -96,6 +114,9 @@ function setOrdWalletInfo(data) {
 
     if ('inscriptions' in data)
         printOrdInscriptions(data['inscriptions'].replaceAll('\\n', '<br>'));
+
+    if ('addresses' in data)
+        printAddresses(data['addresses'])
 
 }
 
@@ -185,18 +206,21 @@ $(function(){
         window.socket.send('restart restart');
     });
 
-    $('#ord-wallet').on('click', '.create', evt => {
-        evt.preventDefault();
-        window.socket.send('ord wallet create');
-    });
-
-    $('#ord-wallet').on('click', '.disable', evt => {
-        evt.preventDefault();
-        window.socket.send('ord wallet delete');
-    });
-
-    $('#ord-wallet').on('click', '.show-seed', evt => {
-        evt.preventDefault();
-        window.socket.send('ord wallet seed phrase');
-    });
+    $('#ord-wallet')
+        .on('click', '.create', evt => {
+            evt.preventDefault();
+            window.socket.send('ord wallet create');
+        })
+        .on('click', '.disable', evt => {
+            evt.preventDefault();
+            window.socket.send('ord wallet delete');
+        })
+        .on('click', '.show-seed', evt => {
+            evt.preventDefault();
+            window.socket.send('ord wallet seed phrase');
+        })
+        .on('click', '.new-address', evt => {
+            evt.preventDefault();
+            window.socket.send('ord wallet new address');
+        });
 })
