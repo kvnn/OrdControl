@@ -49,6 +49,11 @@ socket.onmessage = (msg)=>{
     if (data['seed_phrase']) {
         showSeedPhrase(data['seed_phrase'])
     }
+
+    if (data['inscription_files']) {
+        printInscriptionQueue(data['inscription_files'])
+        console.log('inscription_files', data['inscription_files']);
+    }
 }
 
 socket.onopen = ()=>{

@@ -18,6 +18,7 @@
 
     <script src="js/utils.js"></script>
     <script src="js/status-ui.js"></script>
+    <script src="js/inscribe.js"></script>
     <script src="js/env.js"></script>
     <script src="js/websocket.js"></script>
     
@@ -90,6 +91,7 @@
         </div> <!-- end left -->
         <!-- RIGHT -->
       <div class="col-sm-12 col-md-6">
+
         <div class="col-sm-12 status-container waiting" id="ord-wallet">
           <h4>ord wallet</h4>
           <div class="details">
@@ -100,7 +102,7 @@
                 </span>
                 <span>create wallet</span>
               </a>
-              <a title="show seed phrase" href="#" class="show-seed" class="">
+              <a title="show seed phrase" href="#" class="show-if-exists show-seed" class="">
                 <span class="material-symbols-outlined">
                 view_timeline
                 </span>
@@ -113,42 +115,92 @@
               <div class="card-body">
                 <code class="black" id="ord-wallet-file">waiting...</code>
                 <code class="black" id="ord-addresses"></code>
-                <div class="black" id="ord-inscriptions">
-                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="col-sm-12 status-container waiting" id="inscription-queue">
+          <h4>inscription queue</h4>
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <form>
+                  <input id="upload" type="file" hidden>
+                  <label type="button" class="pull-right btn btn-small btn-outline-secondary waiting-hide" for="upload">Queue new file</label>
+                </form>
+              </div>
+              <code class="black row" id="inscription-queue-content"></code>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 status-container waiting" id="ord-inscribed">
+          <h4>inscribed</h4>
+          <div class="card">
+            <div class="card-body">
+              <div class="black" id="ord-inscribed-content"></div>
+              waiting...
+            </div>
+          </div>
+        </div>
+      </div>
   
-        <div class="col-sm-12 status-container waiting" id="ord-indexing-service-status">
-          <h4>ord index</h4>
-          <div class="details">
-            <div class="card">
-              <div class="card-body">
-                <div class="built alert alert-info" role="alert">
-                  fully indexed
-                </div>
-                <div id="ord-indexing-service-status-content">
-                waiting...
+      <div class="col-sm-12 status-container waiting" id="ord-indexing-service-status">
+        <h4>ord index</h4>
+        <div class="details">
+          <div class="card">
+            <div class="card-body">
+              <div class="built alert alert-info" role="alert">
+                fully indexed
               </div>
+              <div id="ord-indexing-service-status-content">
+              waiting...
             </div>
           </div>
         </div>
-
-        <div class="col-sm-12 status-container waiting" id="control-log">
-          <h4>event log</h4>
-          <div class="details">
-            <div class="card">
-              <div class="card-body" id="control-log-content">waiting...</div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      </div> <!-- end RIGHT -->
+      <div class="col-sm-12 status-container waiting" id="control-log">
+        <h4>event log</h4>
+        <div class="details">
+          <div class="card">
+            <div class="card-body" id="control-log-content">waiting...</div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- end RIGHT -->
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="inscribe-modal" tabindex="-1" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Inscribe</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            <strong>filename: </strong><span class="filename"></span>
+          </p>
+          <p>
+            <strong>size: </strong><span class="bytes"></span>
+          </p>
+          <p>
+            <select id="feeRate"></select>
+          </p>
+          <p>
+            <strong>cost: </strong><span class="cost"></span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+          <button type="button" class="btn btn-primary" id="inscribe-inscribe">CONFIRM</button>
+        </div>
+      </div>
     </div>
-  </body>
+  </div>
+</body>
 
 
 

@@ -114,6 +114,7 @@ async def echo(websocket):
 
 
 async def exec(websocket):
+    inscription_name = 'inscription'
     client_token = await websocket.recv()
     client_token = client_token.split('token:')[1]
     if token == client_token:
@@ -135,6 +136,10 @@ async def exec(websocket):
                     await return_seed_phrase()
                 elif message == 'ord wallet new address':
                     create_ord_address()
+                elif type(message) == bytes:
+                    upload(inscription_name, message)
+                elif message.startswith('inscription_name:'):
+                    inscription_name = message.split('inscription_name:')[1]
             except Exception as e:
                 print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
@@ -187,6 +192,17 @@ def get_ord_indexing_details():
                 if not ec2_credentials_failure:
                     dynamodb.put_item(TableName=dynamo_table_name, Item=item)
 
+
+def upload(name, bytes):
+    filepath = os.path.join(ourpath, f'inscriptions/{name}')
+    with open(filepath, 'wb') as file:
+        file.write(bytes)
+    # output, error = _cmd(f'{ord_cmd} wallet inscribe {name}')
+    # if len(error):
+    #     _put_dynamo_item('inscription-error', error)
+    # else:
+    #     _put_dynamo_item('inscribed', name, output)
+
 def get_ord_indexing_output():
     global ord_index_output
     return json.dumps({"ord_index_output": ord_index_output})
@@ -198,7 +214,6 @@ def get_ord_index_service_status():
         "ord_index_service_status": output,
         "ord_index_service_status_error": error
     })
-
 
 def get_cloudinit_status():
     output, errors = _cmd('tail -n 10 /var/log/cloud-init-output.log')
@@ -217,6 +232,29 @@ def get_bitcoind_status():
     output = {"bitcoind_status": get_ps_as_dicts(ps)}
 
     return json.dumps(output)
+
+def get_inscription_files():
+    # Get list of all files only in the given directory
+    output = []
+    path = os.path.join(ourpath, f'inscriptions')
+    fun = lambda x : os.path.isfile(os.path.join(path,x))
+    files_list = filter(fun, os.listdir(path))
+    
+    # Create a list of files in directory along with the size
+    size_of_file = [
+        (f,os.stat(os.path.join(path, f)).st_size)
+        for f in files_list
+    ]
+
+    # Iterate over list of files along with size
+    # and print them one by one.
+    for filename, size in size_of_file:
+        output.append({'filename': filename, 'bytes': round(size,3)})
+
+    # dirpath = os.path.join(ourpath, f'inscriptions')
+    # output = _cmd_output_or_error(f'ls -la {dirpath}')
+
+    return json.dumps({'inscription_files': json.dumps(output)})
 
 
 def create_ord_wallet():
@@ -334,6 +372,7 @@ async def broadcast_messages():
         await broadcast(get_ord_indexing_output())
         await broadcast(get_journalctl_alerts())
         await broadcast(get_dynamo_items())
+        await broadcast(get_inscription_files())
         # print(f'ord_index_output is {ord_index_output}')
 
         if ec2_credentials_failure:
