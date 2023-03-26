@@ -381,6 +381,6 @@ $(function(){
 
     $('#inscribe-inscribe').click(evt => {
         evt.preventDefault();
-        window.socket.send(`inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`)
+        window.socket.send(`ord inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`)
     })
 })
