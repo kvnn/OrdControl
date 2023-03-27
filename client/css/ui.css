@@ -21,8 +21,11 @@
         margin: 10px 0 0 10px;
     }
 
-    #ord-wallet .show-seed {
+    #ord-wallet .show-if-exists {
         display: none;
+    }
+
+    #ord-wallet .show-seed {
         position: absolute;
         top: 10px;
         right: 10px;
@@ -39,9 +42,13 @@
         display: none;
     }
 
-    #ord-wallet.exists .show-seed,
+    #ord-wallet.exists .show-if-exists,
     #ord-wallet.exists .disable {
         display: inline;
+    }
+
+    #ord-wallet .spent {
+        text-decoration: line-through;
     }
 
 .status-container {
@@ -86,7 +93,7 @@
             overflow-y: scroll;
         }
 
-        #ord-inscriptions {
+        #ord-inscribed-content {
             margin-top: 20px;
         }
 

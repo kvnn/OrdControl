@@ -13,6 +13,7 @@ DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install python3-pip
 while [ ! -d /home/ubuntu/OrdControl ]; do echo "waiting for /home/ubuntu/OrdControl to exist..." && sleep 1; done
 
 # install OrdControl python dependencies
+mkdir /home/ubuntu/OrdControl/inscriptions
 cd /home/ubuntu/OrdControl
 chown -R ubuntu.ubuntu /home/ubuntu/OrdControl
 sudo -H -u ubuntu pip3 install -r requirements.txt

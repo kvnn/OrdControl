@@ -1,3 +1,50 @@
+const MS_PER_MINUTE = 60000;
+
+window.TX_FEES = null;
+window.TX_FEES_UPDATED = null;
+window.SAT_PRICE = null;
+window.SAT_PRICE_UPDATED = null;
+
+
+async function setFeeOptions() {
+    if (
+        !window.TX_FEES_UPDATED ||
+        window.TX_FEES_UPDATED < new Date() - MS_PER_MINUTE
+    ) {
+        let data = await $.get('https://mempool.space/api/v1/fees/recommended');
+        console.log('feeData', data);
+        window.TX_FEES = data;
+        window.TX_FEES_UPDATED = new Date();
+
+        let feeHtml = '';
+        let i = 0;
+        $.each(window.TX_FEES, (key, val) =>{
+            let attr = '';
+            if (i==3) {
+                attr = 'selected';
+            }
+            feeHtml += `<option ${attr} value="${val}">${key}: ${val} sat/vByte</option>`;
+            i++;
+        });
+
+        $('#feeRate').html(feeHtml);
+    }
+}
+
+
+async function setBtcPrice() {
+    if (
+        !window.SAT_PRICE_UPDATED ||
+        window.SAT_PRICE_UPDATED < new Date() - MS_PER_MINUTE
+    ) {
+        // set price
+        let data = await $.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+        console.log('apiData', data);
+        window.SAT_PRICE = parseFloat(data.bitcoin.usd) / (100 * 1000 * 1000);
+        window.SAT_PRICE_UPDATED = new Date();
+    }
+}
+
 function getPsStatusHtml(data) {
     let statusHtml = '';
 
@@ -66,10 +113,64 @@ function setOrdIndexServiceStatus(data) {
 
 function printOrdInscriptions(content) {
     content =   `<code class="black">
-                    <strong>inscriptions:</strong>
+                    <strong>inscribed:</strong>
                     <p>${content}</p>
                 </code>`;
-    $('#ord-inscriptions').html(content);
+    $('#ord-inscribed-content').html(content);
+    $('#ord-inscribed').removeClass('waiting');
+}
+
+function printInscriptionQueue(content) {
+    content = JSON.parse(content);
+    console.log('content', content);
+    let markup =    `<table class="table table-striped">
+                        <thead>
+                            <th scope="col">name</th>
+                            <th scope="col">size</th>
+                            <th scope="col">
+                                cost estimate
+                            </th>
+                            <th scope="col"></th>
+                        </thead>
+                        <tbody>`;
+
+    $.each(content, (idx, itm) => {
+        console.log(itm);
+
+        let fees = window.SAT_PRICE && window.TX_FEES && Object.values(window.TX_FEES);
+        let costs;
+
+        console.log('fees', fees);
+
+        costs = fees && fees.map(fee => {
+            return (SAT_PRICE * (itm.bytes * fee / 4)).toFixed(2);
+        })
+        console.log('costs', costs);
+
+        markup +=   `<tr>
+                        <td>${itm.filename}</td>
+                        <td>${itm.bytes/1000} kb</td>
+                        <td>`;
+        if (costs) {
+            markup += `$${Math.min(...costs)} - $${Math.max(...costs)}`;
+        } else {
+            markup += 'working...';
+        }
+                        
+        markup +=      `</td>
+                        <td>
+                            <a href="#" class="inscribe-btn"
+                            data-filename="${itm.filename}" data-bytes="${itm.bytes}"
+                            data-bs-toggle="modal" data-bs-target="#inscribe-modal">
+                                inscribe
+                            </a>
+                        </td>
+                    </tr>`;
+        ;
+    });
+
+    $('#inscription-queue').removeClass('waiting');
+    $('#inscription-queue-content').html(markup);
 }
 
 function printAddresses(data) {
@@ -78,7 +179,9 @@ function printAddresses(data) {
     let html = `<strong>addresses:</strong>
                 <ul>`
     data.forEach(addressObj => {
-        html += `<li>${addressObj.address}</li>`;
+        html += `<li class="${addressObj.amount > 0 ? 'spent' : 'unspent'}">`;
+        html += addressObj.address;
+        html += `</li>`;
     });
     html += `<a href="#" class="new-address pull-left icon-btn">
                 <span class="material-symbols-outlined">
@@ -90,8 +193,11 @@ function printAddresses(data) {
     $('#ord-addresses').html(html);
 }
 
-function setOrdWalletInfo(data) {
+async function setOrdWalletInfo(data) {
     let walletHtml;
+
+    await setBtcPrice();
+    await setFeeOptions();
 
     if (data.file && data.file.length) {
         $('#ord-wallet').addClass('exists');
@@ -107,7 +213,20 @@ function setOrdWalletInfo(data) {
         walletHtml = '<p>no wallet data</p>'
     }
 
-    walletHtml += `<p><strong>balance: &nbsp;</strong>${data['balance']}</p>`
+    let balance = data['balance'];
+
+    walletHtml += `<p id="balance-cardinal"><strong>balance: &nbsp;</strong>${balance}`
+
+    if (walletHtml.indexOf('cardinal') > -1) {
+        let usdBalance = JSON.parse(balance);
+        usdBalance = usdBalance.cardinal * window.SAT_PRICE;
+        usdBalance = parseInt(usdBalance);
+
+        walletHtml += `<span class="usdBalance">[ $${usdBalance} ]</span>`;
+    }
+
+    walletHtml += '</p>'
+
 
     $('#ord-wallet-file').html(walletHtml);
     $('#ord-wallet').removeClass('waiting');
@@ -213,7 +332,10 @@ $(function(){
         })
         .on('click', '.disable', evt => {
             evt.preventDefault();
-            window.socket.send('ord wallet delete');
+            let confirm = confirm('Delete your WALLET?!!!!?');
+            if (confirm) {
+                window.socket.send('ord wallet delete');
+            }
         })
         .on('click', '.show-seed', evt => {
             evt.preventDefault();
@@ -223,4 +345,42 @@ $(function(){
             evt.preventDefault();
             window.socket.send('ord wallet new address');
         });
+    
+    function getInscriptionFeeRate(){
+        return $('#feeRate').val();
+    }
+
+    function getInscriptionFilename() {
+        return $('#inscribe-modal .filename').text();
+    }
+
+    function getInscriptionBytes() {
+        return parseFloat($('#inscribe-modal .bytes').data('bytes'));
+    }
+
+    $('#inscription-queue').on('click', '.inscribe-btn', evt => {
+        let $target = $(evt.target);
+        let numBytes = $target.data('bytes');
+        console.log('target', $target.data('filename'));
+        console.log('target', $target.data().filename);
+        $('#inscribe-modal .filename').text($target.data('filename'));
+        $('#inscribe-modal .bytes').text(`${numBytes / 1000} kb`);
+        $('#inscribe-modal .bytes').data('bytes', numBytes);
+        printInscriptionCost();
+    });
+
+    function printInscriptionCost() {
+        let feeRate = getInscriptionFeeRate();
+        let cost = (SAT_PRICE * (getInscriptionBytes() * feeRate / 4)).toFixed(2);
+        $('#inscribe-modal .cost').text(`$${cost}`);
+    }
+
+    $('#feeRate').change(evt => {
+        printInscriptionCost();
+    });
+
+    $('#inscribe-inscribe').click(evt => {
+        evt.preventDefault();
+        window.socket.send(`inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`)
+    })
 })
