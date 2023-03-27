@@ -1,9 +1,9 @@
 
 # OrdControl
-This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller (the long-term goal of which is to provide a UI for managing inscriptions).
+This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://github.com/casey/ord) instance with a client-controller. The client currently facilitates creating an ord wallet, viewing balance/address info and uploading / inscribing files.
 
 
-![OrdControl server-built](https://raw.githubusercontent.com/kvnn/OrdControl/master/docs/init-demo.gif)
+![OrdControl server-built](https://raw.githubusercontent.com/kvnn/OrdControl/master/docs/example.png)
 
 
 ## Quickstart
