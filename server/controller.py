@@ -140,6 +140,8 @@ async def exec(websocket):
                     upload(inscription_name, message)
                 elif message.startswith('inscription_name:'):
                     inscription_name = message.split('inscription_name:')[1]
+                elif message.startswith('ord inscribe'):
+                    inscribe(*message.split(' ')[2:])
             except Exception as e:
                 print(f'exec error: {e}')
                 await websocket.send(f'Exception: {e}')
@@ -197,11 +199,16 @@ def upload(name, bytes):
     filepath = os.path.join(ourpath, f'inscriptions/{name}')
     with open(filepath, 'wb') as file:
         file.write(bytes)
-    # output, error = _cmd(f'{ord_cmd} wallet inscribe {name}')
-    # if len(error):
-    #     _put_dynamo_item('inscription-error', error)
-    # else:
-    #     _put_dynamo_item('inscribed', name, output)
+
+def inscribe(filename, numbytes, feerate):
+    # TODO: ensure that the numbytes matches the file size,
+    # to prevent unexpected costs from user error
+    filepath = os.path.join(ourpath, f'inscriptions/{filename}')
+    output, error = _cmd(f'{ord_cmd} wallet inscribe {filepath} --fee-rate {feerate}')
+    if len(error):
+        _put_dynamo_item('inscription-error', error)
+    else:
+        _put_dynamo_item('inscribed', f'{filename}: {output}')
 
 def get_ord_indexing_output():
     global ord_index_output

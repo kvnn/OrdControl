@@ -42,6 +42,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [ ] send funds
     - [ ] view txs
   - [ ] implement Inscription functionality
+    - [x] basic functionality
     - [ ] resilient queueing
     - [ ] smart queue consumer
     - [ ] light database for managing queued Inscriptions
@@ -70,6 +71,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
     - [x] add address
     - [x] view addresses
   - [ ] implement Inscription functionality
+    - [x] basic functionality
     - [ ] custom parameters (e..g fee_rate)
     - [ ] queue visbility
       - [ ] Inscription status
