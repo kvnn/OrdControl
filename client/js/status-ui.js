@@ -12,7 +12,6 @@ async function setFeeOptions() {
         window.TX_FEES_UPDATED < new Date() - MS_PER_MINUTE
     ) {
         let data = await $.get('https://mempool.space/api/v1/fees/recommended');
-        console.log('feeData', data);
         window.TX_FEES = data;
         window.TX_FEES_UPDATED = new Date();
 
@@ -39,7 +38,6 @@ async function setBtcPrice() {
     ) {
         // set price
         let data = await $.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-        console.log('apiData', data);
         window.SAT_PRICE = parseFloat(data.bitcoin.usd) / (100 * 1000 * 1000);
         window.SAT_PRICE_UPDATED = new Date();
     }
@@ -131,7 +129,6 @@ function printOrdOutputs(content) {
 
 function printInscriptionQueue(content) {
     content = JSON.parse(content);
-    console.log('content', content);
     let markup =    `<table class="table table-striped">
                         <thead>
                             <th scope="col">name</th>
@@ -144,17 +141,12 @@ function printInscriptionQueue(content) {
                         <tbody>`;
 
     $.each(content, (idx, itm) => {
-        console.log(itm);
-
         let fees = window.SAT_PRICE && window.TX_FEES && Object.values(window.TX_FEES);
         let costs;
-
-        console.log('fees', fees);
 
         costs = fees && fees.map(fee => {
             return (SAT_PRICE * (itm.bytes * fee / 4)).toFixed(2);
         })
-        console.log('costs', costs);
 
         markup +=   `<tr>
                         <td>${itm.filename}</td>
@@ -184,7 +176,6 @@ function printInscriptionQueue(content) {
 
 function printAddresses(data) {
     data = JSON.parse(data);
-    console.log('data', data);
     let html = `<strong>addresses:</strong>
                 <ul>`
     data.forEach(addressObj => {
@@ -373,8 +364,6 @@ $(function(){
     $('#inscription-queue').on('click', '.inscribe-btn', evt => {
         let $target = $(evt.target);
         let numBytes = $target.data('bytes');
-        console.log('target', $target.data('filename'));
-        console.log('target', $target.data().filename);
         $('#inscribe-modal .filename').text($target.data('filename'));
         $('#inscribe-modal .bytes').text(`${numBytes / 1000} kb`);
         $('#inscribe-modal .bytes').data('bytes', numBytes);

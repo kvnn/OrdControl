@@ -9,7 +9,6 @@ socket.onclose = ()=>{
 }
 
 socket.onmessage = (msg)=>{
-    console.log('msg', msg);
     let data = {};
 
     try {
@@ -52,7 +51,6 @@ socket.onmessage = (msg)=>{
 
     if (data['inscription_files']) {
         printInscriptionQueue(data['inscription_files'])
-        console.log('inscription_files', data['inscription_files']);
     }
 }
 
