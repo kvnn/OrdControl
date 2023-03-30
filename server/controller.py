@@ -205,6 +205,7 @@ def inscribe(filename, numbytes, feerate):
     # to prevent unexpected costs from user error
     filepath = os.path.join(ourpath, f'inscriptions/{filename}')
     output, error = _cmd(f'{ord_cmd} wallet inscribe {filepath} --fee-rate {feerate}')
+    print(f'inscribe output={output}, error={error}')
     if len(error):
         _put_dynamo_item('inscription-error', error)
     else:
@@ -320,6 +321,7 @@ def get_ord_wallet():
         ord_wallet['help'] = _cmd_output_or_error(f'{ord_cmd} wallet help')
     
     if len(ord_wallet['file']):
+        ord_wallet['outputs'] = _cmd_output_or_error(f'{ord_cmd} wallet outputs')
         ord_wallet['balance'] = _cmd_output_or_error(f'{ord_cmd} wallet balance')
         ord_wallet['addresses'] = _cmd_output_or_error(f'{bitcoincli_cmd} listreceivedbyaddress 0 true')
         ord_wallet['inscriptions'] = _cmd_output_or_error(f'{ord_cmd} wallet inscriptions')

@@ -120,6 +120,15 @@ function printOrdInscriptions(content) {
     $('#ord-inscribed').removeClass('waiting');
 }
 
+function printOrdOutputs(content) {
+    content =   `<code class="black">
+                    <strong>outputs:</strong>
+                    <p>${content}</p>
+                </code>`;
+    $('#ord-outputs-content').html(content);
+    $('#ord-outputs').removeClass('waiting');
+}
+
 function printInscriptionQueue(content) {
     content = JSON.parse(content);
     console.log('content', content);
@@ -236,6 +245,9 @@ async function setOrdWalletInfo(data) {
 
     if ('addresses' in data)
         printAddresses(data['addresses'])
+
+    if ('outputs' in data)
+        printOrdOutputs(data['outputs'])
 
 }
 
