@@ -139,7 +139,6 @@
           <div class="card">
             <div class="card-body">
               <div class="black" id="ord-outputs-content"></div>
-              waiting...
             </div>
           </div>
         </div>
@@ -148,7 +147,6 @@
           <div class="card">
             <div class="card-body">
               <div class="black" id="ord-inscribed-content"></div>
-              waiting...
             </div>
           </div>
         </div>
@@ -180,12 +178,12 @@
     </div> <!-- end RIGHT -->
   </div>
 
-  <!-- Modal -->
+  <!-- Inscribe Modal -->
   <div class="modal fade" id="inscribe-modal" tabindex="-1" >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Inscribe</h5>
+          <h5 class="modal-title">Inscribe</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -205,6 +203,34 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
           <button type="button" class="btn btn-primary" id="inscribe-inscribe">CONFIRM</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executed Modal -->
+  <div class="modal fade" id="executed-modal" tabindex="-1" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">E X E C U T E D</h5>
+        </div>
+        <div class="modal-body">
+          <p>
+            You are on your own now.
+          </p>
+          <p>
+            If inscription was successfully broadcast, its transactions should show under "outputs" .
+          </p>
+          <p>
+            Until the change-transaction processes, your wallet will show a lower than actual balance.
+          </p>
+          <p>
+            Feel free to add an Issue at <a target="1" href="https://github.com/kvnn/OrdControl/issues">github.com/kvnn/OrdControl/issues</a>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cool</button>
         </div>
       </div>
     </div>

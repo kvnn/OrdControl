@@ -140,7 +140,17 @@ function printInscriptionQueue(content) {
                         </thead>
                         <tbody>`;
 
-    $.each(content, (idx, itm) => {
+    console.log('content', content);
+
+    const orderedFiles = Object.keys(content).sort().reduce(
+        (obj, key) => {
+            obj[key] = content[key];
+            return obj;
+        },
+        {}
+    );
+
+    $.each(orderedFiles, (idx, itm) => {
         let fees = window.SAT_PRICE && window.TX_FEES && Object.values(window.TX_FEES);
         let costs;
 
@@ -259,7 +269,8 @@ function setEc2BotoCredsError() {
 }
 
 function setCloudinitStatus(data){
-    if (data.indexOf('init.tpl finished') > -1) {
+    if (data.indexOf('finished') > -1 && data.indexOf('Cloud-init') > -1) {
+        // TODO: this has already needed adjustment 1x, would be nice to find a more reliable / less mutable signal
         $('#ord-control-status').addClass('finished');
     }
     $('#ord-control-content').html(data.replaceAll('\n\n', '<br>').replaceAll('\n','<br>'));
@@ -382,6 +393,8 @@ $(function(){
 
     $('#inscribe-inscribe').click(evt => {
         evt.preventDefault();
-        window.socket.send(`ord inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`)
+        window.socket.send(`ord inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`);
+        $('#inscribe-modal').modal('hide');
+        $('#executed-modal').modal('show');
     })
 })

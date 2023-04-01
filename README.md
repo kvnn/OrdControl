@@ -81,3 +81,34 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
       - [ ] cancel
       - [ ] prioritize / replace tx
   - [ ] include `bitcoin-cli` controls?
+
+# controller.py: example outputs
+
+lets make this better
+
+```
+  inscribe output={
+
+    "commit": "7ed2f88a8c27e67e2721c454a045505b47c2741532fbd5306e865cc10f4a0f53",
+
+    "inscription": "452a3e9b08a7c0d1919fe4b7a9a8d08ebc8dc58ebd1fd56de745a2cbbddfafc5i0",
+
+    "reveal": "452a3e9b08a7c0d1919fe4b7a9a8d08ebc8dc58ebd1fd56de745a2cbbddfafc5",
+
+    "fees": 7965
+
+  }
+
+  , error=
+  _put_dynamo_item inscribed ∂ßååå.txt: {
+
+    "commit": "7ed2f88a8c27e67e2721c454a045505b47c2741532fbd5306e865cc10f4a0f53",
+
+    "inscription": "452a3e9b08a7c0d1919fe4b7a9a8d08ebc8dc58ebd1fd56de745a2cbbddfafc5i0",
+
+    "reveal": "452a3e9b08a7c0d1919fe4b7a9a8d08ebc8dc58ebd1fd56de745a2cbbddfafc5",
+
+    "fees": 7965
+
+  }
+```

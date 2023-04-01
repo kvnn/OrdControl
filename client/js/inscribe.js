@@ -13,8 +13,8 @@ $(async function(){
         let fileSizeBytes = file.size;
         let fileType = file.type;
 
-        if (fileSizeBytes > 360 * 1000) {
-            return alert('Sorry, file must be less than 360kb')
+        if (fileSizeBytes > 400 * 1000) {
+            return alert('Sorry, file must be less than 400kb')
         }
 
         window.socket.send(`inscription_name:${name}`)

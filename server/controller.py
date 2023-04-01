@@ -241,6 +241,7 @@ def get_bitcoind_status():
 
     return json.dumps(output)
 
+
 def get_inscription_files():
     # Get list of all files only in the given directory
     output = []
@@ -249,14 +250,16 @@ def get_inscription_files():
     files_list = filter(fun, os.listdir(path))
     
     # Create a list of files in directory along with the size
-    size_of_file = [
+    sizes_list = [
         (f,os.stat(os.path.join(path, f)).st_size)
         for f in files_list
     ]
 
+    sizes_list = sorted(sizes_list, key=lambda tup: tup[1])
+
     # Iterate over list of files along with size
     # and print them one by one.
-    for filename, size in size_of_file:
+    for filename, size in sizes_list:
         output.append({'filename': filename, 'bytes': round(size,3)})
 
     # dirpath = os.path.join(ourpath, f'inscriptions')
