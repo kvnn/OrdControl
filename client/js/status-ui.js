@@ -140,17 +140,7 @@ function printInscriptionQueue(content) {
                         </thead>
                         <tbody>`;
 
-    console.log('content', content);
-
-    const orderedFiles = Object.keys(content).sort().reduce(
-        (obj, key) => {
-            obj[key] = content[key];
-            return obj;
-        },
-        {}
-    );
-
-    $.each(orderedFiles, (idx, itm) => {
+    $.each(content, (idx, itm) => {
         let fees = window.SAT_PRICE && window.TX_FEES && Object.values(window.TX_FEES);
         let costs;
 
@@ -227,7 +217,7 @@ async function setOrdWalletInfo(data) {
 
     walletHtml += `<p id="balance-cardinal"><strong>balance: &nbsp;</strong>${balance}`
 
-    if (walletHtml.indexOf('cardinal') > -1) {
+    if (balance && walletHtml.indexOf('cardinal') > -1) {
         let usdBalance = JSON.parse(balance);
         usdBalance = usdBalance.cardinal * window.SAT_PRICE;
         usdBalance = parseInt(usdBalance);
