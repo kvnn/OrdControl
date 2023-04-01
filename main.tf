@@ -199,15 +199,6 @@ resource "aws_instance" "ord_server" {
     Name = var.resource_tag_name
   }
 
-  provisioner "local-exec" {
-    command = <<-EOT
-      echo 'window.OrdControl = window.OrdControl || {};' > client/js/env.js
-      echo 'window.OrdControl.password="${random_password.password.result}";' >> client/js/env.js
-      echo 'window.OrdControl.wsurl="${aws_instance.ord_server.public_dns}";' >> client/js/env.js
-      cp client/js/env.js server/client-env.js.txt
-    EOT
-  }
-
   provisioner "file" {
     source      = "server"
     destination = "/home/ubuntu/OrdControl"
@@ -219,6 +210,16 @@ resource "aws_instance" "ord_server" {
       private_key = file("~/.ssh/ord_server_${tls_private_key.pk.id}.pem")
       insecure    = true
     }
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      echo 'window.OrdControl = window.OrdControl || {};' > client/js/env.js
+      echo 'window.OrdControl.password="${random_password.password.result}";' >> client/js/env.js
+      echo 'window.OrdControl.wsurl="${aws_instance.ord_server.public_dns}";' >> client/js/env.js
+      echo `window.OrdControl.connectionString = "ssh -o 'StrictHostKeyChecking no'  -i ~/.ssh/ord_server_${tls_private_key.pk.id}.pem ubuntu@${aws_instance.ord_server.public_dns}";` >> client/js/env.js
+      cp client/js/env.js server/client-env.js.txt
+    EOT
   }
 }
 

@@ -21,6 +21,7 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
 
 
 ## Details
+- if you restart the instance, you need to make modifications to the public dns in `env.js`.
 - its taking me 5-10 minutes from `terraform apply` until Ord is successfully indexing. [A docker container might help.](https://github.com/kvnn/OrdControl/issues/4)
 - it sets up a volume at `/mnt/bitcoin-ord-data` with bitcoin and ord data dirs synced up to April 1 2023
 - as of March 6 2023, this setup is costing me about $13 / day, which is almost entirely EC2 costs. I'll sometimes run `terraform --auto-approve destroy` when I know I won't be using it

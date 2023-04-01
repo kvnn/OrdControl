@@ -25,45 +25,44 @@
 
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="navbar-brand reconnecting" id="status-websocket" href="#">
-          <div class="open alert alert-success">
-            <span class="material-symbols-outlined" alt="connected">
-              cell_tower
-            </span>
-            <code class="black">websocket connected</code>
-          </div>
-          <div class="reconnecting alert alert-danger">
-            <span class="material-symbols-outlined">
-              cell_tower
-            </span>
-            <code>websocket reconnecting</code>
-          </div>
-        <a href="#" title="restart" class="restart material-symbols-outlined">
-          restart_alt
-        </a>
-      </div>
-    </nav>
-
+  
     <div class="main container-fluid">
       <div class="row">
         <!-- LEFT -->
         <div class="col-sm-12 col-md-6">
           <div class="col-sm-12 status-container" id="ord-control-status">
             <h4>ord controller</h4>
-            <div class="details">
-              <div class="card">
-                <code class="card-body">
-                  <div class="blink building alert alert-warning" role="alert">
+            
+            <div class="card">
+              <div class="card-body">
+                <div id="status-websocket" href="#">
+                  <div class="open alert alert-success">
+                    <span class="material-symbols-outlined" alt="connected">
+                      cell_tower
+                    </span>
+                    <code class="black">websocket connected</code>
+                  </div>
+                  <div class="reconnecting alert alert-danger">
+                    <span class="material-symbols-outlined">
+                      cell_tower
+                    </span>
+                    <code>websocket reconnecting</code>
+                  </div>
+                  <a href="#" title="restart" class="restart material-symbols-outlined">
+                    restart_alt
+                  </a>
+                </div>
+
+                <div class="details">
+                  <code class="blink building alert alert-warning" role="alert">
                     server is building...
-                  </div>
-                  <div class="built alert alert-info" role="alert">
+                  </code>
+                  <code class="built alert alert-info" role="alert">
                     server  built
-                  </div>
-                  <div id="ord-control-content"></div>
-                </code >
+                  </code>
+                  <code id="ord-control-content"></code>
+                </div>
               </div>
-            </div>
           </div>
 
           <div class="col-sm-12 status-container waiting" id="bitcoind-status">
@@ -88,7 +87,8 @@
               </div>
             </div>
           </div>
-        </div> <!-- end left -->
+        </div>
+      </div>  <!-- end left -->
         <!-- RIGHT -->
       <div class="col-sm-12 col-md-6">
 

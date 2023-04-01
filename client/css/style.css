@@ -40,7 +40,8 @@ code {
     }
 
     #status-websocket.open .open {
-        display: inline;
+        display: inline-block;
+        margin-bottom: 4px;
     }
 
     #status-websocket.open .reconnecting {
