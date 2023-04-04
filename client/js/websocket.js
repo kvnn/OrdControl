@@ -5,7 +5,7 @@ socket = new ReconnectingWebSocket(url);
 socket.debug = true
 
 socket.onclose = ()=>{
-    $('#status-websocket').removeClass('open').addClass('reconnecting')
+    $('#ord-control-status').removeClass('open').addClass('reconnecting')
 }
 
 socket.onmessage = (msg)=>{

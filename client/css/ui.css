@@ -112,7 +112,7 @@
 
     #ord-control-status.finished .card-body,
     .finished #ord-indexing-service-status-content {
-        max-height: 120px;
+        max-height: 81px;
     }
 
     #ord-addresses .icon-btn span:nth-child(2) {

@@ -83,7 +83,16 @@ This is a one-click AWS deployment to run a Bitcoin full-node and [Ord](https://
       - [ ] prioritize / replace tx
   - [ ] include `bitcoin-cli` controls?
 
-# controller.py: example outputs
+
+## ImageMagick tricks
+
+#### reduce gif size
+
+```
+convert repage-orig.gif -coalesce -fuzz 2% +dither -layers Optimize +map repage.gif
+```
+
+## controller.py: example outputs
 
 lets make this better
 
@@ -113,3 +122,4 @@ lets make this better
 
   }
 ```
+

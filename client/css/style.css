@@ -35,25 +35,25 @@ code {
         font-size: 1em;
     }
 
-    #status-websocket .open {
+    #ord-control-status .open {
         display: none;
     }
 
-    #status-websocket.open .open {
+    #ord-control-status.open .open {
         display: inline-block;
         margin-bottom: 4px;
     }
 
-    #status-websocket.open .reconnecting {
+    #ord-control-status.open .reconnecting {
         display: none;
     }
 
-    #status-websocket.reconnecting .reconnecting {
+    #ord-control-status.reconnecting .reconnecting {
         display: inline;
         animation: blinker 3s linear infinite;
     }
 
-    #status-websocket.reconnecting .open {
+    #ord-control-status.reconnecting .open {
         display: none;
     }
 

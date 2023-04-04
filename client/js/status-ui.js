@@ -263,7 +263,7 @@ function setCloudinitStatus(data){
         // TODO: this has already needed adjustment 1x, would be nice to find a more reliable / less mutable signal
         $('#ord-control-status').addClass('finished');
     }
-    $('#ord-control-content').html(data.replaceAll('\n\n', '<br>').replaceAll('\n','<br>'));
+    $('#ord-control-server-content').html(data.replaceAll('\n\n', '<br>').replaceAll('\n','<br>'));
 }
 
 function setJournalCtlAlerts(data) {
