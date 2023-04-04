@@ -200,11 +200,14 @@ def upload(name, bytes):
     with open(filepath, 'wb') as file:
         file.write(bytes)
 
-def inscribe(filename, numbytes, feerate):
+def inscribe(filename, numbytes, feerate, destination=None):
     # TODO: ensure that the numbytes matches the file size,
     # to prevent unexpected costs from user error
     filepath = os.path.join(ourpath, f'inscriptions/{filename}')
-    output, error = _cmd(f'{ord_cmd} wallet inscribe {filepath} --fee-rate {feerate}')
+    cmd = f'{ord_cmd} wallet inscribe {filepath} --fee-rate {feerate}'
+    if destination:
+        cmd += f' --destination {destination}'
+    output, error = _cmd(cmd)
     print(f'inscribe output={output}, error={error}')
     if len(error):
         _put_dynamo_item('inscription-error', error)

@@ -381,10 +381,21 @@ $(function(){
         printInscriptionCost();
     });
 
+
     $('#inscribe-inscribe').click(evt => {
         evt.preventDefault();
-        window.socket.send(`ord inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`);
+
+        let cmd = `ord inscribe ${getInscriptionFilename()} ${getInscriptionBytes()} ${getInscriptionFeeRate()}`
+        let btcAddress = $('#inscribe-address').val();
+
+        // TODO: ensure this is a taproot address
+        if (btcAddress.length > 40) {
+            cmd = `${cmd} ${btcAddress}`
+        }
+
+        window.socket.send(cmd);
         $('#inscribe-modal').modal('hide');
         $('#executed-modal').modal('show');
+        $('#inscribe-address').val('');
     })
 })

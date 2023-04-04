@@ -18,7 +18,7 @@
 
     <script src="js/utils.js"></script>
     <script src="js/status-ui.js"></script>
-    <script src="js/inscribe.js"></script>
+    <script src="js/upload.js"></script>
     <script src="js/env.js"></script>
     <script src="js/websocket.js"></script>
     
@@ -187,19 +187,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>
+          <p class="row">
             <strong>filename: </strong><span class="filename"></span>
           </p>
-          <p>
+          <p class="row">
             <strong>size: </strong><span class="bytes"></span>
           </p>
           <p>
             <select id="feeRate"></select>
           </p>
-          <p>
+          <p class="row">
             <strong>cost: </strong><span class="cost"></span>
           </p>
-          <p>
+          <p class="row">
             <input id="inscribe-address" type="text" placeholder="BTC Address to send Inscription to">
           </p>
         </div>
@@ -224,6 +224,9 @@
           </p>
           <p>
             If inscription was successfully broadcast, its transactions should show under "outputs" .
+          </p>
+          <p>
+            If not, there should be output in the "event log" (scroll down) .
           </p>
           <p>
             Until the change-transaction processes, your wallet will show a lower than actual balance.
